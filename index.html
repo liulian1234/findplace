@@ -3,74 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>伏尼契赏金大厅 - 移动适配版</title>
+    <title>伏尼契赏金大厅 - 多分类版</title>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
     <style>
         :root { --main: #2c3e50; --gold: #d35400; --bg: #f8f6f0; --green: #27ae60; --light-gold: #fffdf0; }
-        
-        body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; background: var(--bg); margin: 0; display: flex; flex-direction: row; }
-        
-        /* --- 电脑端样式 --- */
-        #sidebar { width: 320px; background: white; height: 100vh; position: fixed; padding: 25px; border-right: 1px solid #eee; box-shadow: 2px 0 10px rgba(0,0,0,0.05); box-sizing: border-box; overflow-y: auto; z-index: 100; }
-        #main { margin-left: 320px; padding: 40px; width: calc(100% - 320px); box-sizing: border-box; }
-        
-        .stat-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
-        .stat-card { background: #fdfaf4; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #f1ece0; }
-        .stat-value { font-size: 24px; font-weight: bold; color: var(--main); display: block; }
-        .stat-label { font-size: 12px; color: #7f8c8d; }
+        body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; background: var(--bg); margin: 0; display: flex; flex-direction: column; }
 
-        .card { background: white; border-radius: 12px; padding: 25px; margin-bottom: 25px; display: flex; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.06); transition: 0.3s; }
-        .card img { width: 180px; height: 180px; border-radius: 10px; object-fit: cover; margin-right: 30px; border: 1px solid #eee; cursor: zoom-in; }
-        
+        /* 顶部导航栏 */
+        #nav-bar { background: var(--main); color: white; padding: 0 20px; position: fixed; top: 0; width: 100%; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.2); display: flex; align-items: center; height: 60px; box-sizing: border-box; }
+        .nav-item { padding: 0 15px; cursor: pointer; height: 100%; display: flex; align-items: center; font-weight: bold; font-size: 14px; transition: 0.3s; opacity: 0.7; }
+        .nav-item:hover { opacity: 1; background: rgba(255,255,255,0.1); }
+        .nav-item.active { opacity: 1; background: var(--gold); }
+
+        /* 侧边栏与主区域 */
+        #container { display: flex; margin-top: 60px; }
+        #sidebar { width: 320px; background: white; height: calc(100vh - 60px); position: fixed; padding: 25px; border-right: 1px solid #eee; box-sizing: border-box; overflow-y: auto; }
+        #main { margin-left: 320px; padding: 40px; width: calc(100% - 320px); box-sizing: border-box; min-height: 100vh; }
+
+        /* 统计卡片 */
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .stat-box { background: #fdfaf4; padding: 12px; border-radius: 8px; text-align: center; border: 1px solid #f1ece0; }
+        .stat-val { font-size: 20px; font-weight: bold; color: var(--main); display: block; }
+        .stat-lab { font-size: 11px; color: #7f8c8d; }
+
+        /* 任务卡片样式 */
+        .category-section { display: none; animation: fadeIn 0.4s; }
+        .category-section.active { display: block; }
+        .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; display: flex; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .card img { width: 150px; height: 150px; border-radius: 8px; object-fit: cover; margin-right: 20px; cursor: zoom-in; background: #eee; }
         .info { flex: 1; }
-        .info h2 { margin: 0; color: var(--main); font-size: 1.5em; display: flex; align-items: center; flex-wrap: wrap; }
-        .desc { color: #666; line-height: 1.6; margin: 12px 0; font-size: 14px; }
-        .price { color: var(--gold); font-weight: bold; font-size: 1.4em; margin-bottom: 15px; }
-        
-        .btn { display: inline-block; background: var(--main); color: white; padding: 12px 25px; text-decoration: none; border-radius: 8px; font-weight: bold; text-align: center; }
-        .tag { background: var(--green); color: white; padding: 3px 10px; border-radius: 6px; font-size: 11px; margin-left: 8px; white-space: nowrap; }
-
-        /* --- 手机端自动侦测适配 (屏幕小于 850px 时触发) --- */
-        @media (max-width: 850px) {
-            body { flex-direction: column; }
-            
-            #sidebar { 
-                width: 100%; 
-                height: auto; 
-                position: relative; 
-                border-right: none; 
-                border-bottom: 2px solid #eee; 
-                padding: 20px;
-            }
-            
-            #main { 
-                margin-left: 0; 
-                width: 100%; 
-                padding: 20px; 
-            }
-
-            .card { 
-                flex-direction: column; /* 卡片内容变为上下排列 */
-                padding: 15px;
-                text-align: center;
-            }
-
-            .card img { 
-                width: 100%; /* 图片撑满宽度 */
-                height: 250px; 
-                margin-right: 0; 
-                margin-bottom: 20px; 
-            }
-
-            .info h2 { justify-content: center; font-size: 1.3em; }
-            .btn { width: 100%; box-sizing: border-box; } /* 按钮在手机上变长，方便点击 */
-            
-            #chart { height: 220px !important; }
-        }
+        .info h3 { margin: 0; color: var(--main); }
+        .price { color: var(--gold); font-weight: bold; font-size: 1.3em; margin: 8px 0; }
+        .btn { display: inline-block; background: var(--main); color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-size: 14px; font-weight: bold; }
 
         /* 大图查看器 */
-        #viewer { display: none; position: fixed; z-index: 10001; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); cursor: zoom-out; justify-content: center; align-items: center; }
-        #viewer-img { max-width: 95%; max-height: 80%; border: 2px solid #fff; }
+        #viewer { display: none; position: fixed; z-index: 10001; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); cursor: zoom-out; justify-content: center; align-items: center; }
+        #viewer-img { max-width: 90%; max-height: 85%; border: 3px solid white; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 手机端适配 */
+        @media (max-width: 850px) {
+            #sidebar { width: 100%; height: auto; position: relative; border-right: none; }
+            #main { margin-left: 0; width: 100%; padding: 20px; }
+            #container { flex-direction: column; }
+            .card { flex-direction: column; text-align: center; }
+            .card img { width: 100%; height: 200px; margin-right: 0; margin-bottom: 15px; }
+            #nav-bar { overflow-x: auto; white-space: nowrap; }
+        }
     </style>
 </head>
 <body>
@@ -79,99 +59,112 @@
     <img id="viewer-img" src="">
 </div>
 
-<div id="sidebar">
-    <h2 style="color: var(--main); text-align: center;">🏺 探索者看板</h2>
-    
-    <div class="stat-container">
-        <div class="stat-card">
-            <span class="stat-value">128</span>
-            <span class="stat-label">参与人数</span>
-        </div>
-        <div class="stat-card">
-            <span class="stat-value" id="online-val" style="color: var(--green);">--</span>
-            <span class="stat-label">在线人数</span>
-        </div>
-    </div>
-
-    <div id="chart" style="width: 100%; height: 260px;"></div>
-
-    <div style="padding: 15px; background: var(--light-gold); border-radius: 10px; border: 1px solid #f9e79f; font-size: 13px;">
-        <b>💰 赏金规则：</b><br>
-        点击手稿查看细节，寻找对比图。确认后发放 <b>150 MYR</b>。
-    </div>
+<div id="nav-bar">
+    <div class="nav-item active" onclick="switchCat('voynich', this)">🏺 伏尼契手稿</div>
+    <div class="nav-item" onclick="switchCat('memes', this)">🎬 动漫Memes发源地</div>
+    <div class="nav-item" onclick="switchCat('post', this)">✉️ 发布赏金</div>
 </div>
 
-<div id="main">
-    <h1 style="color: var(--main); border-left: 6px solid var(--gold); padding-left: 15px; font-size: 1.6em; margin-bottom: 30px;">伏尼契悬赏列表</h1>
-
-    <div class="card">
-        <img src="f9v.jpg" onclick="viewImg(this.src)" alt="f9v" onerror="this.src='https://via.placeholder.com/180?text=图片丢失'">
-        <div class="info">
-            <h2>编号：f9v <span class="tag">进行中</span></h2>
-            <p class="desc">特征：五瓣蓝花，根部呈对称肉质分叉。点击可查看高清原图进行比对。</p>
-            <div class="price">150 MYR</div>
-            <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">📥 提交证据</a>
+<div id="container">
+    <div id="sidebar">
+        <h3 style="margin-top:0">📊 实时数据</h3>
+        <div class="stat-grid">
+            <div class="stat-box"><span class="stat-val">241</span><span class="stat-lab">注册猎人</span></div>
+            <div class="stat-box"><span class="stat-val" id="online-num">--</span><span class="stat-lab">在线人数</span></div>
+        </div>
+        <div id="chart" style="width: 100%; height: 240px;"></div>
+        <hr>
+        <div style="padding:12px; background:var(--light-gold); border-radius:8px; font-size:12px; line-height:1.5">
+            <b>公告：</b> 提交证据时请附带详细的对比图链接，雇主将在 24 小时内完成审核。
         </div>
     </div>
 
-    <div class="card">
-        <img src="f33v.jpg" onclick="viewImg(this.src)" alt="f33v" onerror="this.src='https://via.placeholder.com/180?text=图片丢失'">
-        <div class="info">
-            <h2>编号：f33v <span class="tag">进行中</span></h2>
-            <p class="desc">特征：向日葵状花盘，茎部有刺。请注意根部的结节特征。</p>
-            <div class="price">150 MYR</div>
-            <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">📥 提交证据</a>
-        </div>
-    </div>
+    <div id="main">
+        
+        <div id="voynich" class="category-section active">
+            <h2 style="border-left:5px solid var(--gold); padding-left:10px">伏尼契手稿悬赏 (Voynich)</h2>
+            <div class="card">
+                <img src="f9v.jpg" onclick="view(this.src)" onerror="this.src='https://via.placeholder.com/150?text=f9v.jpg'">
+                <div class="info">
+                    <h3>编号：f9v - 蓝花分叉根</h3>
+                    <p class="desc">特征：独特的五瓣蓝花，粗壮对称的肉质根部。</p>
+                    <div class="price">150 MYR</div>
+                    <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">提交证据</a>
+                </div>
+            </div>
+            </div>
 
-    <div class="card">
-        <img src="f25v.jpg" onclick="viewImg(this.src)" alt="f25v" onerror="this.src='https://via.placeholder.com/180?text=图片丢失'">
-        <div class="info">
-            <h2>编号：f25v <span class="tag">进行中</span></h2>
-            <p class="desc">特征：深蓝色钟形花朵，锯齿边缘叶片。寻找与之匹配的草本植物。</p>
-            <div class="price">150 MYR</div>
-            <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">📥 提交证据</a>
+        <div id="memes" class="category-section">
+            <h2 style="border-left:5px solid #3498db; padding-left:10px">动漫 Memes 发源地寻找</h2>
+            <div class="card">
+                <img src="https://via.placeholder.com/150?text=Meme+Target" onclick="view(this.src)">
+                <div class="info">
+                    <h3>任务：寻找“那个名场面”的具体坐标</h3>
+                    <p class="desc">要求：找到某动漫名场面在现实中的取景地街景截图。</p>
+                    <div class="price">50 - 100 MYR</div>
+                    <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">提交坐标</a>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <div class="card">
-        <img src="f15v.jpg" onclick="viewImg(this.src)" alt="f15v" onerror="this.src='https://via.placeholder.com/180?text=图片丢失'">
-        <div class="info">
-            <h2>编号：f15v <span class="tag">进行中</span></h2>
-            <p class="desc">特征：复杂的管状缠绕根部，极具挑战性。建议查阅冷门植物根系图谱。</p>
-            <div class="price">150 MYR</div>
-            <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">📥 提交证据</a>
+        <div id="post" class="category-section">
+            <h2 style="border-left:5px solid var(--green); padding-left:10px">发布你的赏金任务</h2>
+            <div style="background:white; padding:30px; border-radius:12px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05)">
+                <p style="font-size:18px; color:#666">你也有无法解开的谜题或需要寻找的资源？</p>
+                <p>联系雇主并在大厅发布你的悬赏任务。</p>
+                <br>
+                <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn" style="background:var(--green)">立即联系发布</a>
+            </div>
         </div>
+
     </div>
 </div>
 
 <script>
-    function viewImg(src) {
+    // 切换分类逻辑
+    function switchCat(catId, el) {
+        // 1. 切换按钮状态
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        el.classList.add('active');
+        
+        // 2. 切换内容显示
+        document.querySelectorAll('.category-section').forEach(s => s.classList.remove('active'));
+        document.getElementById(catId).classList.add('active');
+
+        // 如果是手机端，点击后自动滚动到内容区
+        if(window.innerWidth < 850) {
+            window.scrollTo({ top: document.getElementById('main').offsetTop - 60, behavior: 'smooth' });
+        }
+    }
+
+    // 图片放大
+    function view(src) {
         document.getElementById('viewer-img').src = src;
         document.getElementById('viewer').style.display = 'flex';
     }
 
-    function updateOnline() {
-        const num = Math.floor(Math.random() * 10) + 5;
-        document.getElementById('online-val').innerText = num;
+    // 在线人数
+    function upOnline() {
+        document.getElementById('online-num').innerText = Math.floor(Math.random()*15)+5;
     }
-    setInterval(updateOnline, 4000);
-    updateOnline();
+    setInterval(upOnline, 5000); upOnline();
 
-    const myChart = echarts.init(document.getElementById('chart'));
-    myChart.setOption({
+    // 饼图
+    const chart = echarts.init(document.getElementById('chart'));
+    chart.setOption({
         series: [{
             type: 'pie',
-            radius: ['45%', '70%'],
-            itemStyle: { borderRadius: 8, borderColor: '#fff', borderWidth: 2 },
-            label: { show: true, position: 'outside', fontSize: 10 },
+            radius: ['40%', '70%'],
+            itemStyle: { borderRadius: 5 },
+            label: { show: true, fontSize: 10 },
             data: [
-                { value: 4, name: '悬赏中', itemStyle: {color: '#d35400'} },
-                { value: 0, name: '已破解', itemStyle: {color: '#27ae60'} }
+                { value: 4, name: '伏尼契', itemStyle:{color:'#d35400'} },
+                { value: 1, name: '动漫', itemStyle:{color:'#3498db'} },
+                { value: 0, name: '已完成', itemStyle:{color:'#27ae60'} }
             ]
         }]
     });
-    window.addEventListener('resize', () => myChart.resize());
+    window.onresize = () => chart.resize();
 </script>
 
 </body>
