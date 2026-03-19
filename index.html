@@ -2,129 +2,91 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>伏尼契赏金游戏 - 委托中心</title>
+    <title>伏尼契赏金大厅 - 实时看板</title>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
     <style>
-        :root { --main-color: #2c3e50; --accent-color: #d35400; }
-        body { font-family: 'PingFang SC', sans-serif; background: #f4f1ea; margin: 0; display: flex; }
-        #side-panel { width: 350px; background: white; height: 100vh; position: fixed; padding: 20px; box-shadow: 2px 0 10px rgba(0,0,0,0.1); box-sizing: border-box; }
-        #content { margin-left: 350px; padding: 40px; width: 100%; }
-        .bounty-card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; display: flex; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .bounty-card img { width: 120px; height: 120px; border-radius: 8px; object-fit: cover; margin-right: 20px; }
-        .price { color: var(--accent-color); font-weight: bold; font-size: 1.2em; }
-        .form-box { background: #fff; padding: 25px; border-radius: 12px; border: 2px dashed #ccc; margin-top: 30px; }
-        input, select, textarea { width: 100%; padding: 10px; margin: 10px 0; border-radius: 6px; border: 1px solid #ddd; }
-        button { background: var(--main-color); color: white; padding: 12px 25px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        button:hover { opacity: 0.9; }
-        .log-item { background: #ecf0f1; padding: 10px; margin-top: 10px; border-radius: 6px; font-size: 0.9em; }
-        .tag-pending { background: #f1c40f; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+        :root { --main: #2c3e50; --gold: #d35400; --bg: #f8f6f0; }
+        body { font-family: 'PingFang SC', sans-serif; background: var(--bg); margin: 0; display: flex; }
+        #sidebar { width: 320px; background: white; height: 100vh; position: fixed; padding: 25px; border-right: 1px solid #eee; box-sizing: border-box; }
+        #main { margin-left: 320px; padding: 40px; width: calc(100% - 320px); }
+        .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 25px; display: flex; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .card img { width: 160px; height: 160px; border-radius: 8px; object-fit: cover; margin-right: 25px; border: 1px solid #eee; cursor: zoom-in; }
+        .info h2 { margin: 0; color: var(--main); }
+        .price { color: var(--gold); font-weight: bold; font-size: 1.4em; margin: 10px 0; }
+        .btn { display: inline-block; background: var(--main); color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; }
+        .btn:hover { background: #34495e; }
+        .tag { background: #27ae60; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; vertical-align: middle; }
     </style>
 </head>
 <body>
 
-
-<div id="side-panel">
-    <h2>📊 探索进度饼图</h2>
+<div id="sidebar">
+    <h2>📊 解密进度</h2>
     <div id="chart" style="width: 100%; height: 300px;"></div>
     <hr>
-    <h3>💰 财务统计</h3>
-    <p>待确认金额：<span id="unpaid">0</span> MYR</p>
-    <p>已支付总额：<span id="paid">0</span> MYR</p>
-    <p style="font-size: 12px; color: #7f8c8d;">* 数据保存在本地当前页面</p>
+    <p>单项赏金：<b style="color:var(--gold)">150 MYR</b></p>
+    <p style="font-size: 12px; color: #999;">只要确认证据属实，立即通过表单留下的账号发放赏金。</p>
 </div>
 
-<div id="content">
-    <h1>🏺 伏尼契手稿植物赏金中心</h1>
-    <p>猎人请注意：提交证据经雇主确认后，150 MYR 奖金将立即结转。</p>
+<div id="main">
+    <h1 style="border-left: 5px solid var(--gold); padding-left: 15px;">🏺 伏尼契手稿：赏金任务列表</h1>
 
-    <div id="bounty-list">
-        <div class="bounty-card">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/4/48/Voynich_Manuscript_f9v.jpg">
-            <div>
-                <h3>任务编号：f9v <span class="tag-pending">悬赏中</span></h3>
-                <p>特征：五瓣蓝花，根部巨大分叉。</p>
-                <p class="price">赏金：150 MYR</p>
-            </div>
-        </div>
-        <div class="bounty-card">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Voynich_Manuscript_f33v.jpg">
-            <div>
-                <h3>任务编号：f33v <span class="tag-pending">悬赏中</span></h3>
-                <p>特征：向日葵状花盘，茎部多刺。</p>
-                <p class="price">赏金：150 MYR</p>
-            </div>
+    <div class="card">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/4/48/Voynich_Manuscript_f9v.jpg" alt="f9v">
+        <div class="info">
+            <h2>编号：f9v <span class="tag">寻找中</span></h2>
+            <p>特征描述：五瓣蓝花，根部呈巨大的分叉肉质状。</p>
+            <div class="price">150 MYR</div>
+            <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">提交 f9v 证据</a>
         </div>
     </div>
 
-<div class="form-box" style="text-align: center; border: 2px solid #d35400; background: #fffbf0;">
-        <h3>📥 赏金猎人：统一证据提交入口</h3>
-        <p style="color: #666; font-size: 14px;">请点击下方按钮进入 Google 表单，按照要求上传图片和物种信息。</p>
-        
-        <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" style="text-decoration: none;">
-            <button style="background: #d35400; color: white; padding: 15px 40px; font-size: 18px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: auto;">
-                立即提交证据 (150 MYR)
-            </button>
-        </a>
-
-        <p style="margin-top: 15px; font-size: 12px; color: #999;">
-            * 提交时请务必填写正确的任务编号，以便核对发钱。
-        </p>
+    <div class="card">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Voynich_Manuscript_f33v.jpg" alt="f33v">
+        <div class="info">
+            <h2>编号：f33v <span class="tag">寻找中</span></h2>
+            <p>特征描述：巨大的向日葵状花盘，茎部带有明显的刺感。</p>
+            <div class="price">150 MYR</div>
+            <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">提交 f33v 证据</a>
+        </div>
     </div>
 
-    <div id="admin-log" style="margin-top: 40px;">
-        <h3>🕵️ 待审核证据 (雇主专用)</h3>
-        <div id="log-container"></div>
+    <div class="card">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2d/Voynich_Manuscript_f25v.jpg" alt="f25v">
+        <div class="info">
+            <h2>编号：f25v <span class="tag">寻找中</span></h2>
+            <p>特征描述：锯齿边缘的叶片，花朵呈现典型的蓝色钟形。</p>
+            <div class="price">150 MYR</div>
+            <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">提交 f25v 证据</a>
+        </div>
     </div>
+
+    <div class="card">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2b/Voynich_Manuscript_f15v.jpg" alt="f15v">
+        <div class="info">
+            <h2>编号：f15v <span class="tag">寻找中</span></h2>
+            <p>特征描述：根部纠缠扭曲，形似人类下肢或复杂的管道系统。</p>
+            <div class="price">150 MYR</div>
+            <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">提交 f15v 证据</a>
+        </div>
+    </div>
+
 </div>
 
 <script>
-    // 初始化饼图数据
-    let stats = { "未解": 5, "现实物种": 0, "人为缝合": 0, "完全虚构": 0 };
-    let paidTotal = 0;
     const chart = echarts.init(document.getElementById('chart'));
-
-    function updateChart() {
-        const option = {
-            series: [{
-                type: 'pie',
-                radius: '70%',
-                data: Object.entries(stats).map(([name, value]) => ({ name, value })),
-                emphasis: { itemStyle: { shadowBlur: 10, shadowColor: 'rgba(0, 0, 0, 0.5)' } }
-            }]
-        };
-        chart.setOption(option);
-    }
-    updateChart();
-
-    function submitEvidence() {
-        const task = document.getElementById('hunter-task').value;
-        const disc = document.getElementById('hunter-discovery').value;
-        const type = document.getElementById('hunter-type').value;
-        
-        if(!disc) return alert("请填写发现内容！");
-
-        const logContainer = document.getElementById('log-container');
-        const item = document.createElement('div');
-        item.className = 'log-item';
-        item.innerHTML = `
-            <strong>任务 ${task}</strong> - 提交内容：${disc} (${type}) 
-            <button style="padding:4px 10px; background:#27ae60; margin-left:10px;" onclick="confirmBounty(this, '${type}')">确认并支付 150 MYR</button>
-        `;
-        logContainer.appendChild(item);
-        alert("提交成功！请等待雇主确认。");
-    }
-
-    function confirmBounty(btn, type) {
-        // 更新统计
-        stats["未解"] -= 1;
-        stats[type] += 1;
-        paidTotal += 150;
-
-        document.getElementById('paid').innerText = paidTotal;
-        updateChart();
-
-        btn.parentElement.innerHTML = `✅ 已确认支付 150 MYR，分类已更新为 [${type}]`;
-    }
+    chart.setOption({
+        series: [{
+            type: 'pie',
+            radius: ['40%', '70%'],
+            data: [
+                { value: 4, name: '寻找中' },
+                { value: 0, name: '现实物种' },
+                { value: 0, name: '虚构/缝合' }
+            ],
+            label: { show: true }
+        }]
+    });
 </script>
 
 </body>
