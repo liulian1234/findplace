@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>伏尼契赏金大厅 - 官方发布版</title>
+    <title>伏尼契赏金大厅 - 点击放大修复版</title>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
     <style>
         :root { --main: #2c3e50; --gold: #d35400; --bg: #f8f6f0; }
@@ -10,51 +10,47 @@
         
         /* 侧边栏 */
         #sidebar { width: 320px; background: white; height: 100vh; position: fixed; padding: 25px; border-right: 1px solid #eee; box-shadow: 2px 0 10px rgba(0,0,0,0.05); box-sizing: border-box; }
-        
-        /* 主内容 */
         #main { margin-left: 320px; padding: 40px; width: calc(100% - 320px); }
         
         /* 任务卡片 */
         .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 25px; display: flex; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: transform 0.2s; }
         .card:hover { transform: translateY(-3px); }
-        .card img { width: 180px; height: 180px; border-radius: 8px; object-fit: cover; margin-right: 25px; border: 1px solid #eee; background: #fafafa; cursor: zoom-in; }
+        
+        /* 图片样式：增加小手光标提示可以点击 */
+        .card img { width: 180px; height: 180px; border-radius: 8px; object-fit: cover; margin-right: 25px; border: 1px solid #eee; background: #fafafa; cursor: pointer; }
         
         .info h2 { margin: 0; color: var(--main); font-size: 1.5em; }
         .desc { color: #666; line-height: 1.6; margin: 10px 0; }
         .price { color: var(--gold); font-weight: bold; font-size: 1.4em; margin: 10px 0; }
-        
-        /* 按钮 */
-        .btn { display: inline-block; background: var(--main); color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold; transition: background 0.3s; }
-        .btn:hover { background: #34495e; }
-        
+        .btn { display: inline-block; background: var(--main); color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold; }
         .tag { background: #27ae60; color: white; padding: 3px 10px; border-radius: 4px; font-size: 12px; vertical-align: middle; margin-left: 10px; }
-        
-        hr { border: 0; border-top: 1px solid #eee; margin: 20px 0; }
 
-        /* --- 新增：图片放大遮罩层样式 --- */
+        /* --- 大图查看器：默认隐藏 --- */
         #image-viewer {
-            display: none;
+            display: none; /* 初始状态必须是 none */
             position: fixed;
             z-index: 9999;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.9);
-            cursor: zoom-out;
+            background-color: rgba(0,0,0,0.85);
+            cursor: pointer;
             justify-content: center;
             align-items: center;
+            animation: fadeIn 0.3s;
         }
         #viewer-img {
             max-width: 90%;
             max-height: 90%;
-            border: 3px solid white;
-            border-radius: 5px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            border: 4px solid white;
+            border-radius: 4px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
         }
+        @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
     </style>
 </head>
 <body>
 
-<div id="image-viewer" onclick="closeViewer()">
+<div id="image-viewer">
     <img id="viewer-img" src="">
 </div>
 
@@ -62,82 +58,84 @@
     <h2 style="color: var(--main)">📊 解密进度总览</h2>
     <div id="chart" style="width: 100%; height: 300px;"></div>
     <hr>
-    <div style="padding: 10px; background: #fffdf0; border-radius: 8px; border: 1px solid #f9e79f;">
+    <div style="padding: 15px; background: #fffdf0; border-radius: 8px; border: 1px solid #f9e79f;">
         <p style="margin: 0; font-weight: bold; color: #7d6608;">💰 赏金规则：</p>
-        <p style="font-size: 13px; color: #7d6608; margin-top: 5px;">提交有效对比图及物种名称，经雇主确认后，150 MYR 立即发放。</p>
+        <p style="font-size: 13px; color: #7d6608; margin-top: 5px;">点击图片查看细节。提交有效对比图，确认后发放 150 MYR。</p>
     </div>
-    <p style="font-size: 12px; color: #999; margin-top: 20px;">* 实时数据同步至 Google Sheets</p>
 </div>
 
 <div id="main">
-    <h1 style="color: var(--main); border-left: 6px solid var(--gold); padding-left: 15px; margin-bottom: 30px;">🏺 伏尼契赏金大厅 (Bounty Hub)</h1>
+    <h1 style="color: var(--main); border-left: 6px solid var(--gold); padding-left: 15px; margin-bottom: 30px;">🏺 伏尼契赏金大厅</h1>
 
     <div class="card">
-        <img src="f9v.jpg" onclick="openViewer(this.src)" alt="任务f9v" onerror="this.src='https://via.placeholder.com/180?text=Image+Not+Found'">
+        <img src="f9v.jpg" class="bounty-img" alt="f9v" onerror="this.src='https://via.placeholder.com/180?text=f9v.jpg+Missing'">
         <div class="info">
             <h2>编号：f9v <span class="tag">悬赏中</span></h2>
-            <p class="desc">特征：具有独特的五瓣蓝花，根部呈现粗壮、对称的肉质分叉结构。</p>
+            <p class="desc">特征：具有独特的五瓣蓝花，根部呈现粗壮肉质结构。</p>
             <div class="price">150 MYR</div>
             <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">提交证据图片</a>
         </div>
     </div>
 
     <div class="card">
-        <img src="f33v.jpg" onclick="openViewer(this.src)" alt="任务f33v" onerror="this.src='https://via.placeholder.com/180?text=Image+Not+Found'">
+        <img src="f33v.jpg" class="bounty-img" alt="f33v" onerror="this.src='https://via.placeholder.com/180?text=f33v.jpg+Missing'">
         <div class="info">
             <h2>编号：f33v <span class="tag">悬赏中</span></h2>
-            <p class="desc">特征：巨大的黄色向日葵状花盘，茎部带有明显的尖刺或瘤状突起。</p>
+            <p class="desc">特征：巨大的黄色向日葵状花盘，茎部带有明显的尖刺。</p>
             <div class="price">150 MYR</div>
             <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">提交证据图片</a>
         </div>
     </div>
 
     <div class="card">
-        <img src="f25v.jpg" onclick="openViewer(this.src)" alt="任务f25v" onerror="this.src='https://via.placeholder.com/180?text=Image+Not+Found'">
+        <img src="f25v.jpg" class="bounty-img" alt="f25v" onerror="this.src='https://via.placeholder.com/180?text=f25v.jpg+Missing'">
         <div class="info">
             <h2>编号：f25v <span class="tag">悬赏中</span></h2>
-            <p class="desc">特征：明显的锯齿状叶片边缘，花朵呈下垂的铃铛状（深蓝色）。</p>
+            <p class="desc">特征：锯齿状叶片边缘，花朵呈下垂蓝色铃铛状。</p>
             <div class="price">150 MYR</div>
             <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">提交证据图片</a>
         </div>
     </div>
 
     <div class="card">
-        <img src="f15v.jpg" onclick="openViewer(this.src)" alt="任务f15v" onerror="this.src='https://via.placeholder.com/180?text=Image+Not+Found'">
+        <img src="f15v.jpg" class="bounty-img" alt="f15v" onerror="this.src='https://via.placeholder.com/180?text=f15v.jpg+Missing'">
         <div class="info">
             <h2>编号：f15v <span class="tag">悬赏中</span></h2>
-            <p class="desc">特征：根部结构极其复杂，形似缠绕的管道或人体器官结构。</p>
+            <p class="desc">特征：根部极其复杂，形似缠绕的管道结构。</p>
             <div class="price">150 MYR</div>
             <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">提交证据图片</a>
         </div>
     </div>
-
 </div>
 
 <script>
-    // --- 新增：图片放大查看器逻辑 ---
-    function openViewer(src) {
-        document.getElementById('viewer-img').src = src;
-        document.getElementById('image-viewer').style.display = 'flex';
-    }
-    function closeViewer() {
-        document.getElementById('image-viewer').style.display = 'none';
+    // --- 交互逻辑：点击放大 ---
+    const viewer = document.getElementById('image-viewer');
+    const viewerImg = document.getElementById('viewer-img');
+    const bountyImages = document.querySelectorAll('.bounty-img');
+
+    // 为所有任务图片绑定点击事件
+    bountyImages.forEach(img => {
+        img.onclick = function() {
+            viewerImg.src = this.src; // 获取当前点击图片的地址
+            viewer.style.display = 'flex'; // 显示查看器
+        }
+    });
+
+    // 点击黑色背景关闭查看器
+    viewer.onclick = function() {
+        viewer.style.display = 'none';
     }
 
-    // 初始化饼图
+    // --- 饼图初始化 ---
     const chart = echarts.init(document.getElementById('chart'));
     chart.setOption({
-        tooltip: { trigger: 'item' },
         series: [{
             type: 'pie',
-            radius: ['45%', '75%'],
-            avoidLabelOverlap: false,
-            itemStyle: { borderRadius: 10, borderColor: '#fff', borderWidth: 2 },
-            label: { show: true, position: 'outside' },
+            radius: ['45%', '70%'],
             data: [
                 { value: 4, name: '寻找中', itemStyle: {color: '#d35400'} },
-                { value: 0, name: '已解密 (现实)', itemStyle: {color: '#27ae60'} },
-                { value: 0, name: '判定 (虚构)', itemStyle: {color: '#bdc3c7'} }
+                { value: 0, name: '已解密', itemStyle: {color: '#27ae60'} }
             ]
         }]
     });
