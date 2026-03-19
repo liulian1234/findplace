@@ -1,137 +1,80 @@
 window.addEventListener('DOMContentLoaded', () => {
+    // 1. 自动加载逻辑
+    async function loadTasks() {
+        const voynichList = document.getElementById('voynich-list');
+        voynichList.innerHTML = ''; 
 
-    console.log("伏尼契系统逻辑启动...");
+        // 智能扫描范围：扫描 f1v 到 f150v
+        // 这样你以后发布任何在这个范围内的编号，网页都会自动出现
+        const possibleIds = [];
+        for(let i=1; i<=150; i++) possibleIds.push(`f${i}v`);
 
+        let foundCount = 0;
 
+        for (const id of possibleIds) {
+            try {
+                const res = await fetch(`./tasks/${id}.json`);
+                if (!res.ok) continue; // 如果文件不存在，跳过
+                
+                const data = await res.json();
+                foundCount++;
 
-    // 1. 获取并显示后台任务 (从 tasks 文件夹读取)
-
-    async function fetchTasks() {
-
-        const taskList = document.getElementById('task-list');
-
-        try {
-
-            // 注意：当你在后台发布任务后，Netlify 会生成这些 JSON
-
-            // 如果你还没发布过，这里会报错，是正常的
-
-            const response = await fetch('/tasks/index.json'); 
-
-            const tasks = await response.json();
-
-            
-
-            if (tasks && tasks.length > 0) {
-
-                taskList.innerHTML = ''; // 清除“加载中”
-
-                tasks.forEach(task => {
-
-                    const card = `
-
-                        <div class="card">
-
-                            <img src="${task.img}" alt="任务图片">
-
-                            <div class="info">
-
-                                <h3>编号：${task.id} <span class="tag">寻找中</span></h3>
-
-                                <p class="desc">${task.desc}</p>
-
-                                <div class="price">赏金：${task.price}</div>
-
-                                <button class="btn" onclick="alert('请通过后台提交证据')">📥 提交证据</button>
-
-                            </div>
-
-                        </div>`;
-
-                    taskList.insertAdjacentHTML('beforeend', card);
-
-                });
-
-            } else {
-
-                taskList.innerHTML = '<p>目前暂无悬赏任务，请等待馆长发布。</p>';
-
-            }
-
-        } catch (e) {
-
-            taskList.innerHTML = '<p>等待馆长发布首个任务...</p>';
-
-            console.log("任务库尚为空白");
-
+                const card = `
+                    <div class="card">
+                        <img src="${data.img}" onclick="view(this.src)" onerror="this.src='https://via.placeholder.com/160?text=图片同步中'">
+                        <div class="info">
+                            <h3>编号：${data.id} <span class="tag">寻找中</span></h3>
+                            <p class="desc">${data.desc}</p>
+                            <div class="price">${data.price}</div>
+                            <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">📥 提交证据</a>
+                        </div>
+                    </div>`;
+                voynichList.insertAdjacentHTML('beforeend', card);
+            } catch (e) { /* 忽略错误 */ }
         }
 
+        if(foundCount === 0) {
+            voynichList.innerHTML = '<p style="color:gray;">目前暂无悬赏，请等待馆长更新...</p>';
+        }
     }
 
-
-
-    // 2. 在线人数波动逻辑
-
-    let onlineNum = 12;
-
+    // 2. 在线人数波动
     const onlineEl = document.getElementById('online-num');
-
     function updateOnline() {
-
-        onlineNum += Math.floor(Math.random() * 5) - 2; // -2 到 +2 波动
-
-        if (onlineNum < 5) onlineNum = 5;
-
-        if (onlineNum > 45) onlineNum = 45;
-
-        if (onlineEl) onlineEl.innerText = onlineNum;
-
+        let num = Math.floor(Math.random() * 20) + 40;
+        if(onlineEl) onlineEl.innerText = num;
     }
-
-    setInterval(updateOnline, 5000);
-
+    setInterval(updateOnline, 3000);
     updateOnline();
 
-
-
-    // 3. 任务分布统计图 (ECharts)
-
+    // 3. 统计图
     const chartDom = document.getElementById('chart');
-
     if (chartDom) {
-
         const myChart = echarts.init(chartDom);
-
-        const option = {
-
-            tooltip: { trigger: 'item' },
-
+        myChart.setOption({
             series: [{
-
-                type: 'pie',
-
-                radius: ['40%', '70%'],
-
-                avoidLabelOverlap: false,
-
-                itemStyle: { borderRadius: 10, borderColor: '#f5e6c8', borderWidth: 2 },
-
-                label: { show: false },
-
-                data: [
-
-                    { value: 2, name: '寻找中', itemStyle: {color: '#d35400'} },
-
-                    { value: 0, name: '已结案', itemStyle: {color: '#27ae60'} }
-
-                ]
-
+                type: 'pie', radius: ['40%', '70%'],
+                label: {show: false},
+                data: [{value: 5, name: '寻找中', itemStyle:{color:'#d35400'}}, 
+                      {value: 2, name: '已完成', itemStyle:{color:'#27ae60'}}]
             }]
-
-        };
-
-        myChart.setOption(option);
-
-        window.addEventListener('resize', () => myChart.resize());
-
+        });
     }
+
+    loadTasks();
+});
+
+// 分类切换
+function switchCat(catId, el) {
+    document.querySelectorAll('.category-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById(catId).classList.add('active');
+    el.classList.add('active');
+}
+
+// 图片预览
+function view(src) {
+    const v = document.getElementById('viewer');
+    document.getElementById('viewer-img').src = src;
+    v.style.display = 'flex';
+}
