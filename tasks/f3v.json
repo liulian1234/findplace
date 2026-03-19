@@ -1,1 +1,7 @@
-{"id":"f3v","desc":"特点：够","img":"/images/45.jpg","price":"502"}
+{
+    "id": "f3v",
+    "desc": "特点：够",
+    "img": "/images/45.jpg",
+    "price": "502",
+    "status": "已结案"
+}
