@@ -1,1 +1,8 @@
-{"id": "f5v", "desc": "任务要求：上钻石4-星耀5", "img": "/images/honor.jpg", "price": "150", "category": "game", "status": "寻找中"}
+{
+    "id": "f5v",
+    "desc": "任务要求：上钻石4-星耀5",
+    "img": "/images/honor.jpg",
+    "price": "150",
+    "category": "game",
+    "status": "已结案"
+}
