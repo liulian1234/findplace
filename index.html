@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>伏尼契赏金大厅 - 实时看板</title>
+    <title>伏尼契赏金大厅 - 修复版</title>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
     <style>
         :root { --main: #2c3e50; --gold: #d35400; --bg: #f8f6f0; }
@@ -10,7 +10,7 @@
         #sidebar { width: 320px; background: white; height: 100vh; position: fixed; padding: 25px; border-right: 1px solid #eee; box-sizing: border-box; }
         #main { margin-left: 320px; padding: 40px; width: calc(100% - 320px); }
         .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 25px; display: flex; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .card img { width: 160px; height: 160px; border-radius: 8px; object-fit: cover; margin-right: 25px; border: 1px solid #eee; cursor: zoom-in; }
+        .card img { width: 160px; height: 160px; border-radius: 8px; object-fit: contain; margin-right: 25px; border: 1px solid #eee; background: #fff; }
         .info h2 { margin: 0; color: var(--main); }
         .price { color: var(--gold); font-weight: bold; font-size: 1.4em; margin: 10px 0; }
         .btn { display: inline-block; background: var(--main); color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; }
@@ -25,47 +25,47 @@
     <div id="chart" style="width: 100%; height: 300px;"></div>
     <hr>
     <p>单项赏金：<b style="color:var(--gold)">150 MYR</b></p>
-    <p style="font-size: 12px; color: #999;">只要确认证据属实，立即通过表单留下的账号发放赏金。</p>
+    <p style="font-size: 12px; color: #999;">只要确认证据属实，立即发放赏金。</p>
 </div>
 
 <div id="main">
     <h1 style="border-left: 5px solid var(--gold); padding-left: 15px;">🏺 伏尼契手稿：赏金任务列表</h1>
 
     <div class="card">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/4/48/Voynich_Manuscript_f9v.jpg" alt="f9v">
+        <img src="https://www.jasondavies.com/voynich/thumbnails/f9v.jpg" alt="f9v">
         <div class="info">
             <h2>编号：f9v <span class="tag">寻找中</span></h2>
-            <p>特征描述：五瓣蓝花，根部呈巨大的分叉肉质状。</p>
+            <p>描述：五瓣蓝花，肥大分叉根部。</p>
             <div class="price">150 MYR</div>
             <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">提交 f9v 证据</a>
         </div>
     </div>
 
     <div class="card">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Voynich_Manuscript_f33v.jpg" alt="f33v">
+        <img src="https://www.jasondavies.com/voynich/thumbnails/f33v.jpg" alt="f33v">
         <div class="info">
             <h2>编号：f33v <span class="tag">寻找中</span></h2>
-            <p>特征描述：巨大的向日葵状花盘，茎部带有明显的刺感。</p>
+            <p>描述：向日葵状花盘，多刺肥厚茎部。</p>
             <div class="price">150 MYR</div>
             <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">提交 f33v 证据</a>
         </div>
     </div>
 
     <div class="card">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2d/Voynich_Manuscript_f25v.jpg" alt="f25v">
+        <img src="https://www.jasondavies.com/voynich/thumbnails/f25v.jpg" alt="f25v">
         <div class="info">
             <h2>编号：f25v <span class="tag">寻找中</span></h2>
-            <p>特征描述：锯齿边缘的叶片，花朵呈现典型的蓝色钟形。</p>
+            <p>特征：锯齿边缘叶片，钟形蓝花。</p>
             <div class="price">150 MYR</div>
             <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">提交 f25v 证据</a>
         </div>
     </div>
 
     <div class="card">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2b/Voynich_Manuscript_f15v.jpg" alt="f15v">
+        <img src="https://www.jasondavies.com/voynich/thumbnails/f15v.jpg" alt="f15v">
         <div class="info">
             <h2>编号：f15v <span class="tag">寻找中</span></h2>
-            <p>特征描述：根部纠缠扭曲，形似人类下肢或复杂的管道系统。</p>
+            <p>特征：人形/管道状缠绕根部。</p>
             <div class="price">150 MYR</div>
             <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">提交 f15v 证据</a>
         </div>
@@ -82,12 +82,10 @@
             data: [
                 { value: 4, name: '寻找中' },
                 { value: 0, name: '现实物种' },
-                { value: 0, name: '虚构/缝合' }
-            ],
-            label: { show: true }
+                { value: 0, name: '虚构' }
+            ]
         }]
     });
 </script>
-
 </body>
 </html>
