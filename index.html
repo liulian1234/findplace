@@ -3,189 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>赏金大厅 - 任务看板</title>
+    <title>伏尼契赏金大厅 - 猎人中心</title>
+    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
-    <style>
-        :root { --main: #2c3e50; --gold: #d35400; --bg: #f8f6f0; --green: #27ae60; --light-gold: #fffdf0; --blue: #3498db; }
-        body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; background: var(--bg); margin: 0; display: flex; flex-direction: column; }
-
-        /* 顶部导航 */
-        #nav-bar { background: var(--main); color: white; padding: 0 20px; position: fixed; top: 0; width: 100%; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.2); display: flex; align-items: center; height: 60px; box-sizing: border-box; }
-        .nav-item { padding: 0 15px; cursor: pointer; height: 100%; display: flex; align-items: center; font-weight: bold; font-size: 14px; transition: 0.3s; opacity: 0.7; }
-        .nav-item:hover { opacity: 1; background: rgba(255,255,255,0.1); }
-        .nav-item.active { opacity: 1; background: var(--gold); }
-
-        /* 布局容器 */
-        #container { display: flex; margin-top: 60px; }
-        #sidebar { width: 320px; background: white; height: calc(100vh - 60px); position: fixed; padding: 25px; border-right: 1px solid #eee; box-sizing: border-box; overflow-y: auto; }
-        #main { margin-left: 320px; padding: 40px; width: calc(100% - 320px); box-sizing: border-box; min-height: 100vh; }
-
-        /* 数据卡片 */
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .stat-box { background: #fdfaf4; padding: 12px; border-radius: 8px; text-align: center; border: 1px solid #f1ece0; }
-        .stat-val { font-size: 20px; font-weight: bold; color: var(--main); display: block; }
-        .stat-lab { font-size: 11px; color: #7f8c8d; }
-
-        .category-section { display: none; animation: fadeIn 0.4s; }
-        .category-section.active { display: block; }
-
-        .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; display: flex; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: 0.3s; }
-        .card img { width: 160px; height: 160px; border-radius: 8px; object-fit: cover; margin-right: 25px; cursor: zoom-in; border: 1px solid #eee; }
-        .info { flex: 1; }
-        .info h3 { margin: 0; color: var(--main); font-size: 1.4em; }
-        .price { color: var(--gold); font-weight: bold; font-size: 1.3em; margin: 10px 0; }
-        .btn { display: inline-block; background: var(--main); color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; }
-        .tag { background: var(--green); color: white; padding: 3px 10px; border-radius: 4px; font-size: 11px; margin-left: 8px; vertical-align: middle; }
-
-        #viewer { display: none; position: fixed; z-index: 10001; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); cursor: zoom-out; justify-content: center; align-items: center; }
-        #viewer-img { max-width: 90%; max-height: 85%; border: 3px solid white; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        @media (max-width: 850px) {
-            #sidebar { width: 100%; height: auto; position: relative; border-right: none; }
-            #main { margin-left: 0; width: 100%; padding: 20px; }
-            #container { flex-direction: column; }
-            .card { flex-direction: column; text-align: center; }
-            .card img { width: 100%; height: 220px; margin-right: 0; margin-bottom: 15px; }
-        }
-    </style>
 </head>
 <body>
 
-<div id="viewer" onclick="this.style.display='none'">
-    <img id="viewer-img" src="">
-</div>
-
-<div id="nav-bar">
-    <div class="nav-item active" onclick="switchCat('voynich', this)">🏺 伏尼契手稿</div>
-    <div class="nav-item" onclick="switchCat('memes', this)">🎬 动漫Memes发源地</div>
-    <div class="nav-item" onclick="switchCat('post', this)">✉️ 发布赏金</div>
-</div>
-
-<div id="container">
-    <div id="sidebar">
-        <h3 style="margin-top:0">📊 任务统计</h3>
-        <div class="stat-grid">
-            <div class="stat-box"><span class="stat-val">128</span><span class="stat-lab">参与猎人</span></div>
-            <div class="stat-box"><span class="stat-val" id="online-num">12</span><span class="stat-lab">在线人数</span></div>
-        </div>
-        <div id="chart" style="width: 100%; height: 240px;"></div>
-        <hr>
-        <div style="padding:15px; background:var(--light-gold); border-radius:10px; font-size:12px; border:1px solid #f9e79f;">
-            <b>💰 赏金规则：</b><br>
-            提供有效线索并被采纳后，赏金将通过指定方式发放。
-        </div>
+    <div id="viewer" onclick="this.style.display='none'">
+        <img id="viewer-img" src="">
     </div>
 
-    <div id="main">
-        <div id="voynich" class="category-section active">
-            <h2 style="border-left:5px solid var(--gold); padding-left:12px; margin-bottom:25px;">伏尼契手稿悬赏任务</h2>
-            <div class="card">
-                <img src="f9v.jpg" onclick="view(this.src)" onerror="this.src='https://via.placeholder.com/160?text=f9v.jpg'">
-                <div class="info">
-                    <h3>编号：f9v <span class="tag">寻找中</span></h3>
-                    <p class="desc">特征：五瓣蓝花，分叉肉质根部。</p>
-                    <div class="price">150 MYR</div>
-                    <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">📥 提交证据</a>
-                </div>
-            </div>
-            <div class="card">
-                <img src="f33v.jpg" onclick="view(this.src)" onerror="this.src='https://via.placeholder.com/160?text=f33v.jpg'">
-                <div class="info">
-                    <h3>编号：f33v <span class="tag">寻找中</span></h3>
-                    <p class="desc">特征：刺茎，向日葵状花盘。</p>
-                    <div class="price">150 MYR</div>
-                    <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">📥 提交证据</a>
-                </div>
-            </div>
-        </div>
+    <nav id="nav-bar">
+        <div class="nav-item active" onclick="switchCat('voynich', this)">🏺 伏尼契手稿</div>
+        <div class="nav-item" onclick="switchCat('memes', this)">🎬 动漫Memes</div>
+        <div class="nav-item" onclick="switchCat('post', this)">✉️ 发布赏金</div>
+    </nav>
 
-        <div id="memes" class="category-section">
-            <h2 style="border-left:5px solid var(--blue); padding-left:12px; margin-bottom:25px;">动漫 Memes 发源地</h2>
-            <div class="card">
-                <img src="https://via.placeholder.com/160?text=Meme+Target" onclick="view(this.src)">
-                <div class="info">
-                    <h3>任务：寻找“名场面”现实坐标</h3>
-                    <p class="desc">要求：提供 Google Maps 坐标及对比图。</p>
-                    <div class="price">50 - 100 MYR</div>
-                    <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">📥 提交坐标</a>
+    <div id="container">
+        <aside id="sidebar">
+            <h3>📊 任务情报站</h3>
+            <div class="stat-grid">
+                <div class="stat-box">
+                    <span class="stat-val">128</span>
+                    <span class="stat-lab">参与猎人</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-val" id="online-num">--</span>
+                    <span class="stat-lab">在线人数</span>
                 </div>
             </div>
-        </div>
-
-        <div id="post" class="category-section">
-            <h2 style="border-left:5px solid var(--green); padding-left:12px; margin-bottom:25px;">发布你的悬赏</h2>
-            <div style="background:white; padding:40px; border-radius:12px; text-align:center;">
-                <h3>联系雇主发布任务</h3>
-                <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn" style="background:var(--green)">立即咨询</a>
+            
+            <div id="chart"></div>
+            
+            <hr>
+            <div class="notice-box">
+                <b>💰 赏金提醒：</b><br>
+                提交证据后，经雇主人工审核通过，赏金将立即发放。
             </div>
-        </div>
+        </aside>
+
+        <main id="main">
+            <section id="voynich" class="category-section active">
+                <h2 class="title gold">伏尼契手稿 (Voynich)</h2>
+                
+                <div class="card">
+                    <img src="f9v.jpg" onclick="view(this.src)" onerror="this.src='https://via.placeholder.com/160?text=f9v.jpg'">
+                    <div class="info">
+                        <h3>编号：f9v <span class="tag">寻找中</span></h3>
+                        <p class="desc">特征：五瓣蓝花，根部呈巨大的对称肉质分叉结构。极具辨识度。</p>
+                        <div class="price">150 MYR</div>
+                        <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">📥 提交证据</a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <img src="f33v.jpg" onclick="view(this.src)" onerror="this.src='https://via.placeholder.com/160?text=f33v.jpg'">
+                    <div class="info">
+                        <h3>编号：f33v <span class="tag">寻找中</span></h3>
+                        <p class="desc">特征：向日葵状花盘，中心致密，茎部有刺。注意根部细节。</p>
+                        <div class="price">150 MYR</div>
+                        <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">📥 提交证据</a>
+                    </div>
+                </div>
+            </section>
+
+            <section id="memes" class="category-section">
+                <h2 class="title blue">动漫 Memes 发源地</h2>
+                <div class="card">
+                    <img src="https://via.placeholder.com/160?text=Meme+Hunt" onclick="view(this.src)">
+                    <div class="info">
+                        <h3>任务：寻找名场面坐标</h3>
+                        <p class="desc">要求：通过画面找到现实中的具体经纬度或 Google 街景。</p>
+                        <div class="price">50 - 100 MYR</div>
+                        <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">📥 提交坐标</a>
+                    </div>
+                </div>
+            </section>
+
+            <section id="post" class="category-section">
+                <h2 class="title green">发布你的悬赏</h2>
+                <div class="post-card">
+                    <p>你也有无法解开的谜题？</p>
+                    <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn green-btn">联系馆长发布任务</a>
+                </div>
+            </section>
+        </main>
     </div>
-</div>
 
-<script>
-    function switchCat(catId, el) {
-        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-        el.classList.add('active');
-        document.querySelectorAll('.category-section').forEach(s => s.classList.remove('active'));
-        document.getElementById(catId).classList.add('active');
-    }
-
-    function view(src) {
-        document.getElementById('viewer-img').src = src;
-        document.getElementById('viewer').style.display = 'flex';
-    }
-
-    // ==========================================
-    // 核心修改：模拟真实呼吸感人数统计
-    // ==========================================
-    let currentOnline = 12; // 初始人数
-
-    function updateOnlineSmart() {
-        const decision = Math.random(); // 生成 0-1 之间的随机数确定行为
-        
-        if (decision < 0.4) {
-            // 40% 概率增加人数
-            currentOnline += Math.floor(Math.random() * 3) + 1; // 增加 1-3 人
-        } else if (decision < 0.7) {
-            // 30% 概率减少人数
-            currentOnline -= Math.floor(Math.random() * 2) + 1; // 减少 1-2 人
-        } else {
-            // 30% 概率保持不变
-            // 不做任何操作
-        }
-
-        // 安全限制：最低 1 人，最高 25 人
-        if (currentOnline < 1) currentOnline = 1;
-        if (currentOnline > 25) currentOnline = 25;
-
-        document.getElementById('online-num').innerText = currentOnline;
-    }
-
-    // 每 5 秒进行一次逻辑判定（你可以改为 10000 即 10 秒更自然）
-    setInterval(updateOnlineSmart, 5000); 
-    updateOnlineSmart(); // 初始执行一次
-
-
-    // 饼图初始化
-    const chart = echarts.init(document.getElementById('chart'));
-    chart.setOption({
-        tooltip: { trigger: 'item' },
-        series: [{
-            name: '任务状态',
-            type: 'pie',
-            radius: ['45%', '75%'],
-            itemStyle: { borderRadius: 8, borderColor: '#fff', borderWidth: 2 },
-            label: { show: true, position: 'outside', fontSize: 11 },
-            data: [
-                { value: 2, name: '寻找中', itemStyle:{color:'#d35400'} },
-                { value: 0, name: '成功结案', itemStyle:{color:'#27ae60'} }
-            ]
-        }]
-    });
-    window.addEventListener('resize', () => chart.resize());
-</script>
-
+    <script src="script.js"></script>
 </body>
 </html>
