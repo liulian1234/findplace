@@ -2,90 +2,113 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>伏尼契赏金大厅 - 修复版</title>
+    <title>伏尼契赏金大厅 - 官方发布版</title>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
     <style>
         :root { --main: #2c3e50; --gold: #d35400; --bg: #f8f6f0; }
-        body { font-family: 'PingFang SC', sans-serif; background: var(--bg); margin: 0; display: flex; }
-        #sidebar { width: 320px; background: white; height: 100vh; position: fixed; padding: 25px; border-right: 1px solid #eee; box-sizing: border-box; }
+        body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; background: var(--bg); margin: 0; display: flex; }
+        
+        /* 侧边栏 */
+        #sidebar { width: 320px; background: white; height: 100vh; position: fixed; padding: 25px; border-right: 1px solid #eee; box-shadow: 2px 0 10px rgba(0,0,0,0.05); box-sizing: border-box; }
+        
+        /* 主内容 */
         #main { margin-left: 320px; padding: 40px; width: calc(100% - 320px); }
-        .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 25px; display: flex; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .card img { width: 160px; height: 160px; border-radius: 8px; object-fit: contain; margin-right: 25px; border: 1px solid #eee; background: #fff; }
-        .info h2 { margin: 0; color: var(--main); }
+        
+        /* 任务卡片 */
+        .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 25px; display: flex; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: transform 0.2s; }
+        .card:hover { transform: translateY(-3px); }
+        .card img { width: 180px; height: 180px; border-radius: 8px; object-fit: cover; margin-right: 25px; border: 1px solid #eee; background: #fafafa; }
+        
+        .info h2 { margin: 0; color: var(--main); font-size: 1.5em; }
+        .desc { color: #666; line-height: 1.6; margin: 10px 0; }
         .price { color: var(--gold); font-weight: bold; font-size: 1.4em; margin: 10px 0; }
-        .btn { display: inline-block; background: var(--main); color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; }
+        
+        /* 按钮 */
+        .btn { display: inline-block; background: var(--main); color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold; transition: background 0.3s; }
         .btn:hover { background: #34495e; }
-        .tag { background: #27ae60; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; vertical-align: middle; }
+        
+        .tag { background: #27ae60; color: white; padding: 3px 10px; border-radius: 4px; font-size: 12px; vertical-align: middle; margin-left: 10px; }
+        
+        hr { border: 0; border-top: 1px solid #eee; margin: 20px 0; }
     </style>
 </head>
 <body>
 
 <div id="sidebar">
-    <h2>📊 解密进度</h2>
+    <h2 style="color: var(--main)">📊 解密进度总览</h2>
     <div id="chart" style="width: 100%; height: 300px;"></div>
     <hr>
-    <p>单项赏金：<b style="color:var(--gold)">150 MYR</b></p>
-    <p style="font-size: 12px; color: #999;">只要确认证据属实，立即发放赏金。</p>
+    <div style="padding: 10px; background: #fffdf0; border-radius: 8px; border: 1px solid #f9e79f;">
+        <p style="margin: 0; font-weight: bold; color: #7d6608;">💰 赏金规则：</p>
+        <p style="font-size: 13px; color: #7d6608; margin-top: 5px;">提交有效对比图及物种名称，经雇主确认后，150 MYR 立即发放。</p>
+    </div>
+    <p style="font-size: 12px; color: #999; margin-top: 20px;">* 实时数据同步至 Google Sheets</p>
 </div>
 
 <div id="main">
-    <h1 style="border-left: 5px solid var(--gold); padding-left: 15px;">🏺 伏尼契手稿：赏金任务列表</h1>
+    <h1 style="color: var(--main); border-left: 6px solid var(--gold); padding-left: 15px; margin-bottom: 30px;">🏺 伏尼契赏金大厅 (Bounty Hub)</h1>
 
     <div class="card">
-        <img src="https://www.jasondavies.com/voynich/thumbnails/f9v.jpg" alt="f9v">
+        <img src="f9v.jpg" alt="任务f9v" onerror="this.src='https://via.placeholder.com/180?text=Image+Not+Found'">
         <div class="info">
-            <h2>编号：f9v <span class="tag">寻找中</span></h2>
-            <p>描述：五瓣蓝花，肥大分叉根部。</p>
+            <h2>编号：f9v <span class="tag">悬赏中</span></h2>
+            <p class="desc">特征：具有独特的五瓣蓝花，根部呈现粗壮、对称的肉质分叉结构。</p>
             <div class="price">150 MYR</div>
-            <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">提交 f9v 证据</a>
+            <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">提交证据图片</a>
         </div>
     </div>
 
     <div class="card">
-        <img src="https://www.jasondavies.com/voynich/thumbnails/f33v.jpg" alt="f33v">
+        <img src="f33v.jpg" alt="任务f33v" onerror="this.src='https://via.placeholder.com/180?text=Image+Not+Found'">
         <div class="info">
-            <h2>编号：f33v <span class="tag">寻找中</span></h2>
-            <p>描述：向日葵状花盘，多刺肥厚茎部。</p>
+            <h2>编号：f33v <span class="tag">悬赏中</span></h2>
+            <p class="desc">特征：巨大的黄色向日葵状花盘，茎部带有明显的尖刺或瘤状突起。</p>
             <div class="price">150 MYR</div>
-            <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">提交 f33v 证据</a>
+            <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">提交证据图片</a>
         </div>
     </div>
 
     <div class="card">
-        <img src="https://www.jasondavies.com/voynich/thumbnails/f25v.jpg" alt="f25v">
+        <img src="f25v.jpg" alt="任务f25v" onerror="this.src='https://via.placeholder.com/180?text=Image+Not+Found'">
         <div class="info">
-            <h2>编号：f25v <span class="tag">寻找中</span></h2>
-            <p>特征：锯齿边缘叶片，钟形蓝花。</p>
+            <h2>编号：f25v <span class="tag">悬赏中</span></h2>
+            <p class="desc">特征：明显的锯齿状叶片边缘，花朵呈下垂的铃铛状（深蓝色）。</p>
             <div class="price">150 MYR</div>
-            <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">提交 f25v 证据</a>
+            <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">提交证据图片</a>
         </div>
     </div>
 
     <div class="card">
-        <img src="https://www.jasondavies.com/voynich/thumbnails/f15v.jpg" alt="f15v">
+        <img src="f15v.jpg" alt="任务f15v" onerror="this.src='https://via.placeholder.com/180?text=Image+Not+Found'">
         <div class="info">
-            <h2>编号：f15v <span class="tag">寻找中</span></h2>
-            <p>特征：人形/管道状缠绕根部。</p>
+            <h2>编号：f15v <span class="tag">悬赏中</span></h2>
+            <p class="desc">特征：根部结构极其复杂，形似缠绕的管道或人体器官结构。</p>
             <div class="price">150 MYR</div>
-            <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">提交 f15v 证据</a>
+            <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">提交证据图片</a>
         </div>
     </div>
 
 </div>
 
 <script>
+    // 初始化饼图
     const chart = echarts.init(document.getElementById('chart'));
     chart.setOption({
+        tooltip: { trigger: 'item' },
         series: [{
             type: 'pie',
-            radius: ['40%', '70%'],
+            radius: ['45%', '75%'],
+            avoidLabelOverlap: false,
+            itemStyle: { borderRadius: 10, borderColor: '#fff', borderWidth: 2 },
+            label: { show: true, position: 'outside' },
             data: [
-                { value: 4, name: '寻找中' },
-                { value: 0, name: '现实物种' },
-                { value: 0, name: '虚构' }
+                { value: 4, name: '寻找中', itemStyle: {color: '#d35400'} },
+                { value: 0, name: '已解密 (现实)', itemStyle: {color: '#27ae60'} },
+                { value: 0, name: '判定 (虚构)', itemStyle: {color: '#bdc3c7'} }
             ]
         }]
     });
 </script>
+
 </body>
 </html>
