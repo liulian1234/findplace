@@ -2,153 +2,166 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>伏尼契赏金大厅 - 探索者看板</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>伏尼契赏金大厅 - 猎人中心</title>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
     <style>
-        :root { --main: #2c3e50; --gold: #d35400; --bg: #f8f6f0; --green: #27ae60; }
+        :root { --main: #2c3e50; --gold: #d35400; --bg: #f8f6f0; --green: #27ae60; --light-gold: #fffdf0; }
         body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; background: var(--bg); margin: 0; display: flex; }
         
-        /* 侧边栏 */
+        /* 侧边栏样式 */
         #sidebar { width: 320px; background: white; height: 100vh; position: fixed; padding: 25px; border-right: 1px solid #eee; box-shadow: 2px 0 10px rgba(0,0,0,0.05); box-sizing: border-box; overflow-y: auto; }
-        #main { margin-left: 320px; padding: 40px; width: calc(100% - 320px); }
+        #main { margin-left: 320px; padding: 40px; width: calc(100% - 320px); box-sizing: border-box; }
         
-        /* 数据卡片 */
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
-        .stat-box { background: #fdfaf4; padding: 15px; border-radius: 8px; text-align: center; border: 1px solid #f1ece0; }
-        .stat-num { font-size: 22px; font-weight: bold; color: var(--main); display: block; }
-        .stat-label { font-size: 12px; color: #7f8c8d; }
+        /* 统计数字卡片 */
+        .stat-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+        .stat-card { background: #fdfaf4; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #f1ece0; }
+        .stat-value { font-size: 24px; font-weight: bold; color: var(--main); display: block; margin-bottom: 5px; }
+        .stat-label { font-size: 12px; color: #7f8c8d; letter-spacing: 1px; }
 
-        /* 任务卡片 */
-        .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 25px; display: flex; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: transform 0.2s; }
-        .card:hover { transform: translateY(-3px); }
-        .card img { width: 180px; height: 180px; border-radius: 8px; object-fit: cover; margin-right: 25px; border: 1px solid #eee; cursor: pointer; transition: 0.3s; }
-        .card img:hover { opacity: 0.8; }
+        /* 任务卡片样式 */
+        .card { background: white; border-radius: 12px; padding: 25px; margin-bottom: 25px; display: flex; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.06); transition: 0.3s; border: 1px solid transparent; }
+        .card:hover { transform: translateY(-5px); border-color: var(--gold); }
+        .card img { width: 180px; height: 180px; border-radius: 10px; object-fit: cover; margin-right: 30px; border: 1px solid #eee; cursor: zoom-in; transition: 0.3s; }
+        .card img:hover { opacity: 0.9; transform: scale(1.02); }
         
-        .info h2 { margin: 0; color: var(--main); font-size: 1.5em; }
-        .desc { color: #666; line-height: 1.6; margin: 10px 0; font-size: 14px; }
-        .price { color: var(--gold); font-weight: bold; font-size: 1.4em; margin: 10px 0; }
-        .btn { display: inline-block; background: var(--main); color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold; transition: 0.3s; }
-        .btn:hover { background: #34495e; transform: scale(1.05); }
-        .tag { background: var(--green); color: white; padding: 3px 10px; border-radius: 4px; font-size: 12px; vertical-align: middle; margin-left: 10px; }
+        .info h2 { margin: 0; color: var(--main); font-size: 1.6em; }
+        .desc { color: #666; line-height: 1.6; margin: 15px 0; font-size: 14px; }
+        .price { color: var(--gold); font-weight: bold; font-size: 1.5em; margin: 10px 0; }
+        
+        /* 按钮样式 */
+        .btn { display: inline-block; background: var(--main); color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; transition: 0.3s; border: none; }
+        .btn:hover { background: var(--gold); transform: scale(1.05); box-shadow: 0 5px 15px rgba(211, 84, 0, 0.3); }
+        .tag { background: var(--green); color: white; padding: 4px 12px; border-radius: 6px; font-size: 12px; vertical-align: middle; margin-left: 10px; }
 
-        /* 大图查看器 */
-        #image-viewer { display: none; position: fixed; z-index: 9999; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); cursor: pointer; justify-content: center; align-items: center; }
-        #viewer-img { max-width: 85%; max-height: 85%; border: 5px solid white; border-radius: 4px; }
+        /* 图片大图查看器 (Modal) */
+        #viewer { display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); cursor: zoom-out; justify-content: center; align-items: center; }
+        #viewer-img { max-width: 90%; max-height: 90%; border-radius: 4px; box-shadow: 0 0 40px rgba(0,0,0,0.5); }
 
-        hr { border: 0; border-top: 1px solid #eee; margin: 20px 0; }
+        hr { border: 0; border-top: 1px solid #eee; margin: 25px 0; }
+        
+        @media (max-width: 900px) {
+            body { flex-direction: column; }
+            #sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid #eee; }
+            #main { margin-left: 0; width: 100%; }
+        }
     </style>
 </head>
 <body>
 
-<div id="image-viewer" onclick="this.style.display='none'">
+<div id="viewer" onclick="this.style.display='none'">
     <img id="viewer-img" src="">
 </div>
 
 <div id="sidebar">
-    <h2 style="color: var(--main); margin-bottom: 5px;">📊 实时探索看板</h2>
-    <p style="font-size: 12px; color: #999; margin-bottom: 20px;">数据每 5 分钟同步一次</p>
+    <h2 style="color: var(--main); margin-bottom: 5px;">🏺 伏尼契赏金看板</h2>
+    <p style="font-size: 12px; color: #999; margin-bottom: 20px;">实时数据统计（手动更新）</p>
     
-    <div class="stat-grid">
-        <div class="stat-box">
-            <span class="stat-num" id="hunter-count">128</span>
-            <span class="stat-label">参与猎人</span>
+    <div class="stat-container">
+        <div class="stat-card">
+            <span class="stat-value">128</span>
+            <span class="stat-label">参与人数</span>
         </div>
-        <div class="stat-box">
-            <span class="stat-num" id="online-count" style="color: var(--green);">--</span>
-            <span class="stat-label">当前在线</span>
+        <div class="stat-card">
+            <span class="stat-value" id="online-val" style="color: var(--green);">--</span>
+            <span class="stat-label">正在线</span>
         </div>
     </div>
 
-    <div id="chart" style="width: 100%; height: 260px;"></div>
+    <div id="chart" style="width: 100%; height: 280px;"></div>
 
-    <div style="padding: 15px; background: #fffdf0; border-radius: 8px; border: 1px solid #f9e79f; margin-top: 10px;">
-        <p style="margin: 0; font-weight: bold; color: #7d6608;">💰 赏金规则：</p>
-        <p style="font-size: 13px; color: #7d6608; margin-top: 5px;">点击手稿查看高清细节。在表单提交对比图，确认物种后发放 150 MYR。</p>
+    <div style="padding: 18px; background: var(--light-gold); border-radius: 10px; border: 1px solid #f9e79f; margin-top: 10px;">
+        <p style="margin: 0; font-weight: bold; color: #7d6608;">💰 领赏流程：</p>
+        <p style="font-size: 13px; color: #7d6608; line-height: 1.5; margin-top: 8px;">
+            1. 点击图片研究细节<br>
+            2. 寻找现实世界对比图<br>
+            3. 点击下方按钮提交证据<br>
+            4. 确认后 <b>150 MYR</b> 立即发放
+        </p>
     </div>
-    
-    <p style="text-align: center; margin-top: 30px;">
-        <img src="https://stats.minecraft.ms/badge/view/voynich_hunter?label=Explorer&color=blue" alt="Visitor Count">
-    </p>
 </div>
 
 <div id="main">
-    <h1 style="color: var(--main); border-left: 6px solid var(--gold); padding-left: 15px; margin-bottom: 30px;">🏺 伏尼契赏金大厅 (Voynich Bounty Hub)</h1>
+    <h1 style="color: var(--main); border-left: 6px solid var(--gold); padding-left: 20px; margin-bottom: 40px; letter-spacing: 2px;">伏尼契手稿 (Voynich) 悬赏任务列表</h1>
 
     <div class="card">
-        <img src="f9v.jpg" onclick="openFullImage(this.src)" alt="f9v" onerror="this.src='https://via.placeholder.com/180?text=f9v.jpg+Missing'">
+        <img src="f9v.jpg" onclick="viewImg(this.src)" alt="f9v" onerror="this.src='https://via.placeholder.com/180?text=f9v.jpg+丢失'">
         <div class="info">
-            <h2>编号：f9v <span class="tag">悬赏中</span></h2>
-            <p class="desc">特征：具有独特的五瓣蓝花，根部呈现粗壮肉质结构，形似人参或巨大的分叉。</p>
+            <h2>编号：f9v <span class="tag">进行中</span></h2>
+            <p class="desc">描述：拥有独特的五瓣蓝色花朵，根部呈现巨大的、对称的肉质分叉结构。极具辨识度，可能是某种变异物种或已灭绝植物。</p>
             <div class="price">150 MYR</div>
-            <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">提交证据图片</a>
+            <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">📥 提交证据</a>
         </div>
     </div>
 
     <div class="card">
-        <img src="f33v.jpg" onclick="openFullImage(this.src)" alt="f33v" onerror="this.src='https://via.placeholder.com/180?text=f33v.jpg+Missing'">
+        <img src="f33v.jpg" onclick="viewImg(this.src)" alt="f33v" onerror="this.src='https://via.placeholder.com/180?text=f33v.jpg+丢失'">
         <div class="info">
-            <h2>编号：f33v <span class="tag">悬赏中</span></h2>
-            <p class="desc">特征：巨大的黄色向日葵状花盘，中心有密集的种群结构，茎部带有明显的尖刺。</p>
+            <h2>编号：f33v <span class="tag">进行中</span></h2>
+            <p class="desc">描述：花盘巨大类似向日葵，中心结构细密，茎部有明显的尖刺。根部粗大且带有不规则突起。</p>
             <div class="price">150 MYR</div>
-            <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">提交证据图片</a>
+            <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">📥 提交证据</a>
         </div>
     </div>
 
     <div class="card">
-        <img src="f25v.jpg" onclick="openFullImage(this.src)" alt="f25v" onerror="this.src='https://via.placeholder.com/180?text=f25v.jpg+Missing'">
+        <img src="f25v.jpg" onclick="viewImg(this.src)" alt="f25v" onerror="this.src='https://via.placeholder.com/180?text=f25v.jpg+丢失'">
         <div class="info">
-            <h2>编号：f25v <span class="tag">悬赏中</span></h2>
-            <p class="desc">特征：叶片呈深度锯齿状，花朵为下垂的蓝色铃铛形态，具有明显的药用植物特征。</p>
+            <h2>编号：f25v <span class="tag">进行中</span></h2>
+            <p class="desc">描述：锯齿状叶片，花朵为下垂的铃铛形态，呈深蓝色。结构相对完整，寻找对比物种概率较高。</p>
             <div class="price">150 MYR</div>
-            <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">提交证据图片</a>
+            <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">📥 提交证据</a>
         </div>
     </div>
 
     <div class="card">
-        <img src="f15v.jpg" onclick="openFullImage(this.src)" alt="f15v" onerror="this.src='https://via.placeholder.com/180?text=f15v.jpg+Missing'">
+        <img src="f15v.jpg" onclick="viewImg(this.src)" alt="f15v" onerror="this.src='https://via.placeholder.com/180?text=f15v.jpg+丢失'">
         <div class="info">
-            <h2>编号：f15v <span class="tag">悬赏中</span></h2>
-            <p class="desc">特征：手稿中最神秘的根部之一，形似相互缠绕的工业管道或人体消化系统。</p>
+            <h2>编号：f15v <span class="tag">进行中</span></h2>
+            <p class="desc">描述：根部结构极其诡异，呈管状交叉缠绕，形似工业管道或人体内脏结构，是目前难度最高的任务之一。</p>
             <div class="price">150 MYR</div>
-            <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">提交证据图片</a>
+            <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">📥 提交证据</a>
         </div>
     </div>
+
 </div>
 
 <script>
-    // 1. 点击放大逻辑
-    function openFullImage(src) {
-        const viewer = document.getElementById('image-viewer');
-        const viewerImg = document.getElementById('viewer-img');
-        viewerImg.src = src;
-        viewer.style.display = 'flex';
+    // 1. 大图查看器逻辑
+    function viewImg(src) {
+        document.getElementById('viewer-img').src = src;
+        document.getElementById('viewer').style.display = 'flex';
     }
 
-    // 2. 模拟在线人数逻辑 (3-12人之间随机)
-    function refreshOnline() {
-        const randomNum = Math.floor(Math.random() * 10) + 3;
-        document.getElementById('online-count').innerText = randomNum;
+    // 2. 在线人数动态模拟 (3-15人)
+    function updateOnline() {
+        const num = Math.floor(Math.random() * 12) + 3;
+        document.getElementById('online-val').innerText = num;
     }
-    setInterval(refreshOnline, 4000);
-    refreshOnline();
+    setInterval(updateOnline, 3500);
+    updateOnline();
 
-    // 3. 饼图初始化
-    const chart = echarts.init(document.getElementById('chart'));
-    chart.setOption({
+    // 3. 进度饼图初始化 (Echarts)
+    const myChart = echarts.init(document.getElementById('chart'));
+    myChart.setOption({
         tooltip: { trigger: 'item' },
         series: [{
-            name: '解密状态',
+            name: '解密进度',
             type: 'pie',
-            radius: ['45%', '75%'],
-            itemStyle: { borderRadius: 8, borderColor: '#fff', borderWidth: 2 },
+            radius: ['45%', '70%'],
+            avoidLabelOverlap: false,
+            itemStyle: { borderRadius: 10, borderColor: '#fff', borderWidth: 2 },
             label: { show: true, position: 'outside', formatter: '{b}' },
             data: [
-                { value: 4, name: '寻找中', itemStyle: {color: '#d35400'} },
+                { value: 4, name: '悬赏中', itemStyle: {color: '#d35400'} },
                 { value: 0, name: '已破解', itemStyle: {color: '#27ae60'} },
                 { value: 0, name: '判定虚构', itemStyle: {color: '#bdc3c7'} }
             ]
         }]
     });
+
+    // 响应式调整图表
+    window.onresize = function() { myChart.resize(); };
 </script>
 
 </body>
