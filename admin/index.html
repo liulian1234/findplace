@@ -4,46 +4,22 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>馆长后台</title>
-  <script src="https://cdn.jsdelivr.net/npm/decap-cms@3.1.2/dist/decap-cms.js"></script>
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 <body>
+  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  
   <script>
-    // 强制初始化
-    window.CMS_MANUAL_INIT = true;
-    
-    document.addEventListener('DOMContentLoaded', function() {
-      window.CMS.init({
-        config: {
-          backend: {
-            name: "github",
-            repo: "liulian1234/findplace", // 你的仓库名
-            branch: "main",
-            base_url: "https://findplace-xi.vercel.app",
-            auth_endpoint: "api/auth" 
-          },
-          load_config_file: false, // 强制不读取 config.yml，避免干扰
-          display_url: "https://findplace-xi.vercel.app",
-          media_folder: "images",
-          public_folder: "images",
-          collections: [
-            {
-              name: "tasks",
-              label: "悬赏任务",
-              folder: "tasks",
-              create: true,
-              extension: "json",
-              format: "json",
-              fields: [
-                { label: "编号", name: "id", widget: "string" },
-                { label: "描述", name: "desc", widget: "text" },
-                { label: "图片", name: "img", widget: "image" },
-                { label: "金额", name: "price", widget: "string" }
-              ]
-            }
-          ]
+    // 自动处理登录跳转
+    if (window.netlifyIdentity) {
+      window.netlifyIdentity.on("init", user => {
+        if (!user) {
+          window.netlifyIdentity.on("login", () => {
+            document.location.href = "/admin/";
+          });
         }
       });
-    });
+    }
   </script>
 </body>
 </html>
