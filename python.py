@@ -4,7 +4,7 @@ from github import Github
 import os
 
 # ================= 配置区 =================
-TOKEN = "你的ghp_开头的Token"
+TOKEN = "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"
 REPO_NAME = "liulian1234/findplace"
 # ==========================================
 
