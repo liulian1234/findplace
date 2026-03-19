@@ -2,11 +2,38 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>馆长后台管理</title>
+  <title>馆长后台</title>
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
 </head>
 <body>
+  <script>
+    CMS.init({
+      config: {
+        backend: {
+          name: "github",
+          repo: "你的用户名/你的仓库名", // 确认这里改成了你自己的！
+          branch: "main",
+        },
+        display_url: "https://你的域名.vercel.app",
+        media_folder: "/",
+        collections: [
+          {
+            name: "tasks",
+            label: "悬赏任务",
+            folder: "/",
+            create: true,
+            extension: "json",
+            format: "json",
+            fields: [
+              { label: "编号", name: "id", widget: "string" },
+              { label: "描述", name: "desc", widget: "text" },
+              { label: "图片", name: "img", widget: "image" },
+              { label: "金额", name: "price", widget: "string" }
+            ]
+          }
+        ]
+      }
+    });
+  </script>
 </body>
 </html>
-
