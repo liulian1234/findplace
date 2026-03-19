@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>赏金大厅 - 任务中心</title>
+    <title>赏金大厅 - 结案统计版</title>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
     <style>
         :root { --main: #2c3e50; --gold: #d35400; --bg: #f8f6f0; --green: #27ae60; --light-gold: #fffdf0; --blue: #3498db; }
@@ -76,16 +76,18 @@
 
 <div id="container">
     <div id="sidebar">
-        <h3 style="margin-top:0">📊 实时探索看板</h3>
+        <h3 style="margin-top:0">📊 任务结案统计</h3>
         <div class="stat-grid">
             <div class="stat-box"><span class="stat-val">128</span><span class="stat-lab">参与猎人</span></div>
             <div class="stat-box"><span class="stat-val" id="online-num">--</span><span class="stat-lab">在线人数</span></div>
         </div>
+        
         <div id="chart" style="width: 100%; height: 240px;"></div>
+        
         <hr>
         <div style="padding:15px; background:var(--light-gold); border-radius:10px; border: 1px solid #f9e79f; font-size:12px;">
             <b>💰 赏金规则：</b><br>
-            点击图片查看细节。找到现实对比图后点击提交，经确认发放 <b>150 MYR</b>。
+            找到证据后点击提交。首位被采纳的解密者将获得全额 <b>150 MYR</b> 赏金。
         </div>
     </div>
 
@@ -98,7 +100,7 @@
                 <img src="f9v.jpg" onclick="view(this.src)" onerror="this.src='https://via.placeholder.com/160?text=f9v.jpg+Missing'">
                 <div class="info">
                     <h3>编号：f9v <span class="tag">寻找中</span></h3>
-                    <p class="desc">特征：五瓣蓝花，根部呈巨大的对称肉质结构。重点观察根部与植物的连接比例。</p>
+                    <p class="desc">特征：五瓣蓝花，根部呈对称肉质分叉结构。请重点比对现实中具有庞大块茎的蓝色花卉。</p>
                     <div class="price">150 MYR</div>
                     <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">📥 提交证据</a>
                 </div>
@@ -108,7 +110,7 @@
                 <img src="f33v.jpg" onclick="view(this.src)" onerror="this.src='https://via.placeholder.com/160?text=f33v.jpg+Missing'">
                 <div class="info">
                     <h3>编号：f33v <span class="tag">寻找中</span></h3>
-                    <p class="desc">特征：向日葵状花盘，中心结构致密，茎部带刺。寻找现实中具有此类刺茎的草本植物。</p>
+                    <p class="desc">特征：巨大的向日葵状花盘，中心结构极其细密，茎部密布尖刺。根部带有明显的瘤状突起。</p>
                     <div class="price">150 MYR</div>
                     <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">📥 提交证据</a>
                 </div>
@@ -116,12 +118,12 @@
         </div>
 
         <div id="memes" class="category-section">
-            <h2 style="border-left:5px solid var(--blue); padding-left:12px; margin-bottom:25px;">动漫 Memes 现实地址寻找</h2>
+            <h2 style="border-left:5px solid var(--blue); padding-left:12px; margin-bottom:25px;">动漫 Memes 现实坐标寻找</h2>
             <div class="card">
-                <img src="https://via.placeholder.com/160?text=Meme+Hunt" onclick="view(this.src)">
+                <img src="https://via.placeholder.com/160?text=Meme+Target" onclick="view(this.src)">
                 <div class="info">
-                    <h3>任务：寻找“名场面”现实取景地</h3>
-                    <p class="desc">要求：提供该名场面在 Google Maps 上的具体坐标及实景截图。首位发现者得赏金。</p>
+                    <h3>任务：寻找“那个名场面”的现实坐标</h3>
+                    <p class="desc">要求：通过动漫画面找到日本或世界各地的真实取景地，需提供 Google Street View 链接。</p>
                     <div class="price">50 - 100 MYR</div>
                     <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">📥 提交坐标</a>
                 </div>
@@ -133,7 +135,7 @@
             <div style="background:white; padding:40px; border-radius:12px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05)">
                 <div style="font-size:50px; margin-bottom:20px;">✉️</div>
                 <h3>想要在大厅发布任务？</h3>
-                <p style="color:#666; max-width:400px; margin: 0 auto 25px;">无论是寻找资源、解密图片还是寻找特定位置，你都可以在此设立赏金，吸引全球猎人。</p>
+                <p style="color:#666; max-width:400px; margin: 0 auto 25px;">如果你有任何悬而未决的问题，都可以在此利用全球猎人的力量来解决。</p>
                 <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn" style="background:var(--green); padding: 15px 40px;">联系雇主发布</a>
             </div>
         </div>
@@ -159,25 +161,25 @@
         document.getElementById('viewer').style.display = 'flex';
     }
 
-    // 模拟在线人数
+    // 在线人数
     function upOnline() {
         document.getElementById('online-num').innerText = Math.floor(Math.random()*12)+4;
     }
     setInterval(upOnline, 4000); upOnline();
 
-    // 饼图初始化
+    // --- 饼图初始化：展示“成功结案”和“寻找中” ---
     const chart = echarts.init(document.getElementById('chart'));
     chart.setOption({
-        tooltip: { trigger: 'item' },
+        tooltip: { trigger: 'item', formatter: '{b}: {c}个 ({d}%)' },
         series: [{
+            name: '任务状态',
             type: 'pie',
             radius: ['45%', '75%'],
-            avoidLabelOverlap: false,
             itemStyle: { borderRadius: 8, borderColor: '#fff', borderWidth: 2 },
-            label: { show: true, position: 'outside', fontSize: 10 },
+            label: { show: true, position: 'outside', fontSize: 11 },
             data: [
-                { value: 2, name: '伏尼契', itemStyle:{color:'#d35400'} },
-                { value: 1, name: '动漫Meme', itemStyle:{color:'#3498db'} }
+                { value: 2, name: '寻找中', itemStyle:{color:'#d35400'} }, // 这里设置寻找中的数量
+                { value: 0, name: '成功结案', itemStyle:{color:'#27ae60'} } // 这里设置结案的数量
             ]
         }]
     });
