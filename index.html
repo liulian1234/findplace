@@ -32,9 +32,7 @@
                     <span class="stat-lab">在线人数</span>
                 </div>
             </div>
-            
-            <div id="chart"></div>
-            
+            <div id="chart" style="height: 200px;"></div>
             <hr>
             <div class="notice-box">
                 <b>💰 赏金提醒：</b><br>
@@ -45,39 +43,15 @@
         <main id="main">
             <section id="voynich" class="category-section active">
                 <h2 class="title gold">伏尼契手稿 (Voynich)</h2>
-                
-                <div class="card">
-                    <img src="f9v.jpg" onclick="view(this.src)" onerror="this.src='https://via.placeholder.com/160?text=f9v.jpg'">
-                    <div class="info">
-                        <h3>编号：f9v <span class="tag">寻找中</span></h3>
-                        <p class="desc">特征：五瓣蓝花，根部呈巨大的对称肉质分叉结构。极具辨识度。</p>
-                        <div class="price">150 MYR</div>
-                        <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">📥 提交证据</a>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <img src="f33v.jpg" onclick="view(this.src)" onerror="this.src='https://via.placeholder.com/160?text=f33v.jpg'">
-                    <div class="info">
-                        <h3>编号：f33v <span class="tag">寻找中</span></h3>
-                        <p class="desc">特征：向日葵状花盘，中心致密，茎部有刺。注意根部细节。</p>
-                        <div class="price">150 MYR</div>
-                        <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">📥 提交证据</a>
-                    </div>
+                <div id="voynich-list" class="task-grid">
+                    <p class="loading">📡 正在同步猎人情报...</p>
                 </div>
             </section>
 
             <section id="memes" class="category-section">
                 <h2 class="title blue">动漫 Memes 发源地</h2>
-                <div class="card">
-                    <img src="https://via.placeholder.com/160?text=Meme+Hunt" onclick="view(this.src)">
-                    <div class="info">
-                        <h3>任务：寻找名场面坐标</h3>
-                        <p class="desc">要求：通过画面找到现实中的具体经纬度或 Google 街景。</p>
-                        <div class="price">50 - 100 MYR</div>
-                        <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">📥 提交坐标</a>
+                <div id="memes-list" class="task-grid">
                     </div>
-                </div>
             </section>
 
             <section id="post" class="category-section">
