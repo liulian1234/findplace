@@ -3,45 +3,46 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>馆长后台管理</title>
-  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
-  <style>
-    /* 强制给登录页面加点颜色，防止全白看不见 */
-    body { background-color: #f5e6c8 !important; }
-    .nc-github-authentication-button { background-color: #3d2b1f !important; color: white !important; }
-  </style>
+  <title>馆长后台</title>
+  <script src="https://cdn.jsdelivr.net/npm/decap-cms@3.1.2/dist/decap-cms.js"></script>
 </head>
 <body>
   <script>
-    // 直接在这里写死配置，不用去读 config.yml，最稳！
-    CMS.init({
-      config: {
-        backend: {
-          name: "github",
-          repo: "liulian1234/findplace", // 你的仓库
-          branch: "main",
-        },
-        display_url: "https://findplace-xi.vercel.app",
-        media_folder: "images", // 建议图片统一放进 images 文件夹
-        public_folder: "images",
-        collections: [
-          {
-            name: "tasks",
-            label: "悬赏任务",
-            folder: "content/tasks", // 任务数据存放在这里
-            create: true,
-            extension: "json",
-            format: "json",
-            fields: [
-              { label: "任务编号", name: "id", widget: "string" },
-              { label: "特征描述", name: "desc", widget: "text" },
-              { label: "图片上传", name: "img", widget: "image" },
-              { label: "赏金金额", name: "price", widget: "string" },
-              { label: "状态", name: "status", widget: "select", options: ["寻找中", "已结案"] }
-            ]
-          }
-        ]
-      }
+    // 强制初始化
+    window.CMS_MANUAL_INIT = true;
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      window.CMS.init({
+        config: {
+          backend: {
+            name: "github",
+            repo: "liulian1234/findplace", // 你的仓库名
+            branch: "main",
+            base_url: "https://findplace-xi.vercel.app",
+            auth_endpoint: "api/auth" 
+          },
+          load_config_file: false, // 强制不读取 config.yml，避免干扰
+          display_url: "https://findplace-xi.vercel.app",
+          media_folder: "images",
+          public_folder: "images",
+          collections: [
+            {
+              name: "tasks",
+              label: "悬赏任务",
+              folder: "tasks",
+              create: true,
+              extension: "json",
+              format: "json",
+              fields: [
+                { label: "编号", name: "id", widget: "string" },
+                { label: "描述", name: "desc", widget: "text" },
+                { label: "图片", name: "img", widget: "image" },
+                { label: "金额", name: "price", widget: "string" }
+              ]
+            }
+          ]
+        }
+      });
     });
   </script>
 </body>
