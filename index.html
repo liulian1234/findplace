@@ -15,7 +15,9 @@
 
     <nav id="nav-bar">
         <div class="nav-item active" onclick="switchCat('voynich', this)">🏺 伏尼契手稿</div>
-        <div class="nav-item" onclick="switchCat('memes', this)">🎬 动漫Memes</div>
+        <div class="nav-item" onclick="switchCat('game', this)">🎮 游戏任务</div>
+        <div class="nav-item" onclick="switchCat('crack', this)">🔓 破解任务</div>
+        <div class="nav-item" onclick="switchCat('progress', this)">⏳ 破解进度</div> <div class="nav-item" onclick="switchCat('bounty', this)">💰 赏金任务</div>
         <div class="nav-item" onclick="switchCat('post', this)">✉️ 发布赏金</div>
     </nav>
 
@@ -48,10 +50,25 @@
                 </div>
             </section>
 
-            <section id="memes" class="category-section">
-                <h2 class="title blue">动漫 Memes 发源地</h2>
-                <div id="memes-list" class="task-grid">
+            <section id="game" class="category-section">
+                <h2 class="title blue">🎮 游戏任务大厅</h2>
+                <div id="game-list" class="task-grid"></div>
+            </section>
+
+            <section id="crack" class="category-section">
+                <h2 class="title purple" style="border-left-color: #9b59b6;">🔓 破解任务终端</h2>
+                <div id="crack-list" class="task-grid"></div>
+            </section>
+
+            <section id="progress" class="category-section">
+                <h2 class="title" style="border-left: 5px solid #34495e; padding-left: 12px; color: #2c3e50;">⏳ 实时破解进度</h2>
+                <div id="progress-list" class="task-grid">
                     </div>
+            </section>
+
+            <section id="bounty" class="category-section">
+                <h2 class="title green">💰 赏金任务中心</h2>
+                <div id="bounty-list" class="task-grid"></div>
             </section>
 
             <section id="post" class="category-section">
