@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>伏尼契赏金大厅 - 多分类版</title>
+    <title>赏金大厅 - 任务中心</title>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
     <style>
-        :root { --main: #2c3e50; --gold: #d35400; --bg: #f8f6f0; --green: #27ae60; --light-gold: #fffdf0; }
+        :root { --main: #2c3e50; --gold: #d35400; --bg: #f8f6f0; --green: #27ae60; --light-gold: #fffdf0; --blue: #3498db; }
         body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; background: var(--bg); margin: 0; display: flex; flex-direction: column; }
 
         /* 顶部导航栏 */
@@ -15,41 +15,50 @@
         .nav-item:hover { opacity: 1; background: rgba(255,255,255,0.1); }
         .nav-item.active { opacity: 1; background: var(--gold); }
 
-        /* 侧边栏与主区域 */
+        /* 布局容器 */
         #container { display: flex; margin-top: 60px; }
         #sidebar { width: 320px; background: white; height: calc(100vh - 60px); position: fixed; padding: 25px; border-right: 1px solid #eee; box-sizing: border-box; overflow-y: auto; }
         #main { margin-left: 320px; padding: 40px; width: calc(100% - 320px); box-sizing: border-box; min-height: 100vh; }
 
-        /* 统计卡片 */
+        /* 数据卡片 */
         .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         .stat-box { background: #fdfaf4; padding: 12px; border-radius: 8px; text-align: center; border: 1px solid #f1ece0; }
         .stat-val { font-size: 20px; font-weight: bold; color: var(--main); display: block; }
         .stat-lab { font-size: 11px; color: #7f8c8d; }
 
-        /* 任务卡片样式 */
+        /* 内容板块切换 */
         .category-section { display: none; animation: fadeIn 0.4s; }
         .category-section.active { display: block; }
-        .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; display: flex; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .card img { width: 150px; height: 150px; border-radius: 8px; object-fit: cover; margin-right: 20px; cursor: zoom-in; background: #eee; }
+
+        /* 任务卡片样式 */
+        .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; display: flex; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid transparent; transition: 0.3s; }
+        .card:hover { border-color: var(--gold); transform: translateY(-3px); }
+        .card img { width: 160px; height: 160px; border-radius: 8px; object-fit: cover; margin-right: 25px; cursor: zoom-in; background: #eee; border: 1px solid #eee; }
+        
         .info { flex: 1; }
-        .info h3 { margin: 0; color: var(--main); }
-        .price { color: var(--gold); font-weight: bold; font-size: 1.3em; margin: 8px 0; }
-        .btn { display: inline-block; background: var(--main); color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-size: 14px; font-weight: bold; }
+        .info h3 { margin: 0; color: var(--main); font-size: 1.4em; }
+        .desc { color: #666; font-size: 14px; line-height: 1.6; margin: 10px 0; }
+        .price { color: var(--gold); font-weight: bold; font-size: 1.3em; margin-bottom: 12px; }
+        .btn { display: inline-block; background: var(--main); color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-size: 14px; font-weight: bold; transition: 0.3s; }
+        .btn:hover { background: var(--gold); }
+        
+        .tag { background: var(--green); color: white; padding: 3px 10px; border-radius: 4px; font-size: 11px; margin-left: 8px; vertical-align: middle; }
 
         /* 大图查看器 */
-        #viewer { display: none; position: fixed; z-index: 10001; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); cursor: zoom-out; justify-content: center; align-items: center; }
-        #viewer-img { max-width: 90%; max-height: 85%; border: 3px solid white; }
+        #viewer { display: none; position: fixed; z-index: 10001; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); cursor: zoom-out; justify-content: center; align-items: center; }
+        #viewer-img { max-width: 90%; max-height: 85%; border: 3px solid white; border-radius: 4px; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* 手机端适配 */
+        /* 手机适配 */
         @media (max-width: 850px) {
-            #sidebar { width: 100%; height: auto; position: relative; border-right: none; }
+            #sidebar { width: 100%; height: auto; position: relative; border-right: none; padding: 20px; }
             #main { margin-left: 0; width: 100%; padding: 20px; }
             #container { flex-direction: column; }
             .card { flex-direction: column; text-align: center; }
-            .card img { width: 100%; height: 200px; margin-right: 0; margin-bottom: 15px; }
-            #nav-bar { overflow-x: auto; white-space: nowrap; }
+            .card img { width: 100%; height: 220px; margin-right: 0; margin-bottom: 15px; }
+            #nav-bar { overflow-x: auto; white-space: nowrap; justify-content: flex-start; }
+            .nav-item { flex-shrink: 0; font-size: 13px; }
         }
     </style>
 </head>
@@ -67,53 +76,65 @@
 
 <div id="container">
     <div id="sidebar">
-        <h3 style="margin-top:0">📊 实时数据</h3>
+        <h3 style="margin-top:0">📊 实时探索看板</h3>
         <div class="stat-grid">
-            <div class="stat-box"><span class="stat-val">241</span><span class="stat-lab">注册猎人</span></div>
+            <div class="stat-box"><span class="stat-val">128</span><span class="stat-lab">参与猎人</span></div>
             <div class="stat-box"><span class="stat-val" id="online-num">--</span><span class="stat-lab">在线人数</span></div>
         </div>
         <div id="chart" style="width: 100%; height: 240px;"></div>
         <hr>
-        <div style="padding:12px; background:var(--light-gold); border-radius:8px; font-size:12px; line-height:1.5">
-            <b>公告：</b> 提交证据时请附带详细的对比图链接，雇主将在 24 小时内完成审核。
+        <div style="padding:15px; background:var(--light-gold); border-radius:10px; border: 1px solid #f9e79f; font-size:12px;">
+            <b>💰 赏金规则：</b><br>
+            点击图片查看细节。找到现实对比图后点击提交，经确认发放 <b>150 MYR</b>。
         </div>
     </div>
 
     <div id="main">
         
         <div id="voynich" class="category-section active">
-            <h2 style="border-left:5px solid var(--gold); padding-left:10px">伏尼契手稿悬赏 (Voynich)</h2>
+            <h2 style="border-left:5px solid var(--gold); padding-left:12px; margin-bottom:25px;">伏尼契手稿悬赏任务</h2>
+            
             <div class="card">
-                <img src="f9v.jpg" onclick="view(this.src)" onerror="this.src='https://via.placeholder.com/150?text=f9v.jpg'">
+                <img src="f9v.jpg" onclick="view(this.src)" onerror="this.src='https://via.placeholder.com/160?text=f9v.jpg+Missing'">
                 <div class="info">
-                    <h3>编号：f9v - 蓝花分叉根</h3>
-                    <p class="desc">特征：独特的五瓣蓝花，粗壮对称的肉质根部。</p>
+                    <h3>编号：f9v <span class="tag">寻找中</span></h3>
+                    <p class="desc">特征：五瓣蓝花，根部呈巨大的对称肉质结构。重点观察根部与植物的连接比例。</p>
                     <div class="price">150 MYR</div>
-                    <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">提交证据</a>
+                    <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">📥 提交证据</a>
                 </div>
             </div>
+
+            <div class="card">
+                <img src="f33v.jpg" onclick="view(this.src)" onerror="this.src='https://via.placeholder.com/160?text=f33v.jpg+Missing'">
+                <div class="info">
+                    <h3>编号：f33v <span class="tag">寻找中</span></h3>
+                    <p class="desc">特征：向日葵状花盘，中心结构致密，茎部带刺。寻找现实中具有此类刺茎的草本植物。</p>
+                    <div class="price">150 MYR</div>
+                    <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">📥 提交证据</a>
+                </div>
             </div>
+        </div>
 
         <div id="memes" class="category-section">
-            <h2 style="border-left:5px solid #3498db; padding-left:10px">动漫 Memes 发源地寻找</h2>
+            <h2 style="border-left:5px solid var(--blue); padding-left:12px; margin-bottom:25px;">动漫 Memes 现实地址寻找</h2>
             <div class="card">
-                <img src="https://via.placeholder.com/150?text=Meme+Target" onclick="view(this.src)">
+                <img src="https://via.placeholder.com/160?text=Meme+Hunt" onclick="view(this.src)">
                 <div class="info">
-                    <h3>任务：寻找“那个名场面”的具体坐标</h3>
-                    <p class="desc">要求：找到某动漫名场面在现实中的取景地街景截图。</p>
+                    <h3>任务：寻找“名场面”现实取景地</h3>
+                    <p class="desc">要求：提供该名场面在 Google Maps 上的具体坐标及实景截图。首位发现者得赏金。</p>
                     <div class="price">50 - 100 MYR</div>
-                    <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">提交坐标</a>
+                    <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">📥 提交坐标</a>
                 </div>
             </div>
         </div>
 
         <div id="post" class="category-section">
-            <h2 style="border-left:5px solid var(--green); padding-left:10px">发布你的赏金任务</h2>
-            <div style="background:white; padding:30px; border-radius:12px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05)">
-                <p style="font-size:18px; color:#666">你也有无法解开的谜题或需要寻找的资源？</p>
-                <p>联系雇主并在大厅发布你的悬赏任务。</p>
-                <br>
-                <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn" style="background:var(--green)">立即联系发布</a>
+            <h2 style="border-left:5px solid var(--green); padding-left:12px; margin-bottom:25px;">发布你的悬赏</h2>
+            <div style="background:white; padding:40px; border-radius:12px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05)">
+                <div style="font-size:50px; margin-bottom:20px;">✉️</div>
+                <h3>想要在大厅发布任务？</h3>
+                <p style="color:#666; max-width:400px; margin: 0 auto 25px;">无论是寻找资源、解密图片还是寻找特定位置，你都可以在此设立赏金，吸引全球猎人。</p>
+                <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn" style="background:var(--green); padding: 15px 40px;">联系雇主发布</a>
             </div>
         </div>
 
@@ -121,17 +142,12 @@
 </div>
 
 <script>
-    // 切换分类逻辑
+    // 切换分类
     function switchCat(catId, el) {
-        // 1. 切换按钮状态
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
         el.classList.add('active');
-        
-        // 2. 切换内容显示
         document.querySelectorAll('.category-section').forEach(s => s.classList.remove('active'));
         document.getElementById(catId).classList.add('active');
-
-        // 如果是手机端，点击后自动滚动到内容区
         if(window.innerWidth < 850) {
             window.scrollTo({ top: document.getElementById('main').offsetTop - 60, behavior: 'smooth' });
         }
@@ -143,28 +159,29 @@
         document.getElementById('viewer').style.display = 'flex';
     }
 
-    // 在线人数
+    // 模拟在线人数
     function upOnline() {
-        document.getElementById('online-num').innerText = Math.floor(Math.random()*15)+5;
+        document.getElementById('online-num').innerText = Math.floor(Math.random()*12)+4;
     }
-    setInterval(upOnline, 5000); upOnline();
+    setInterval(upOnline, 4000); upOnline();
 
-    // 饼图
+    // 饼图初始化
     const chart = echarts.init(document.getElementById('chart'));
     chart.setOption({
+        tooltip: { trigger: 'item' },
         series: [{
             type: 'pie',
-            radius: ['40%', '70%'],
-            itemStyle: { borderRadius: 5 },
-            label: { show: true, fontSize: 10 },
+            radius: ['45%', '75%'],
+            avoidLabelOverlap: false,
+            itemStyle: { borderRadius: 8, borderColor: '#fff', borderWidth: 2 },
+            label: { show: true, position: 'outside', fontSize: 10 },
             data: [
-                { value: 4, name: '伏尼契', itemStyle:{color:'#d35400'} },
-                { value: 1, name: '动漫', itemStyle:{color:'#3498db'} },
-                { value: 0, name: '已完成', itemStyle:{color:'#27ae60'} }
+                { value: 2, name: '伏尼契', itemStyle:{color:'#d35400'} },
+                { value: 1, name: '动漫Meme', itemStyle:{color:'#3498db'} }
             ]
         }]
     });
-    window.onresize = () => chart.resize();
+    window.addEventListener('resize', () => chart.resize());
 </script>
 
 </body>
