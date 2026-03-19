@@ -1,29 +1,69 @@
-<nav id="nav-bar">
-    <div class="nav-item active" onclick="switchCat('voynich', this)">🏺 伏尼契手稿</div>
-    <div class="nav-item" onclick="switchCat('game', this)">🎮 游戏任务</div>
-    <div class="nav-item" onclick="switchCat('crack', this)">🔓 破解任务</div>
-    <div class="nav-item" onclick="switchCat('bounty', this)">💰 赏金任务</div>
-    <div class="nav-item" onclick="switchCat('post', this)">✉️ 发布赏金</div>
-</nav>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>伏尼契赏金大厅 - 猎人中心</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+</head>
+<body>
 
-<main id="main">
-    <section id="voynich" class="category-section active">
-        <h2 class="title gold">伏尼契手稿 (Voynich)</h2>
-        <div id="voynich-list" class="task-grid"></div>
-    </section>
+    <div id="viewer" onclick="this.style.display='none'">
+        <img id="viewer-img" src="">
+    </div>
 
-    <section id="game" class="category-section">
-        <h2 class="title blue">🎮 游戏任务大厅</h2>
-        <div id="game-list" class="task-grid"></div>
-    </section>
+    <nav id="nav-bar">
+        <div class="nav-item active" onclick="switchCat('voynich', this)">🏺 伏尼契手稿</div>
+        <div class="nav-item" onclick="switchCat('memes', this)">🎬 动漫Memes</div>
+        <div class="nav-item" onclick="switchCat('post', this)">✉️ 发布赏金</div>
+    </nav>
 
-    <section id="crack" class="category-section">
-        <h2 class="title purple">🔓 破解任务终端</h2>
-        <div id="crack-list" class="task-grid"></div>
-    </section>
+    <div id="container">
+        <aside id="sidebar">
+            <h3>📊 任务情报站</h3>
+            <div class="stat-grid">
+                <div class="stat-box">
+                    <span class="stat-val">128</span>
+                    <span class="stat-lab">参与猎人</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-val" id="online-num">--</span>
+                    <span class="stat-lab">在线人数</span>
+                </div>
+            </div>
+            <div id="chart" style="height: 200px;"></div>
+            <hr>
+            <div class="notice-box">
+                <b>💰 赏金提醒：</b><br>
+                提交证据后，经雇主人工审核通过，赏金将立即发放。
+            </div>
+        </aside>
 
-    <section id="bounty" class="category-section">
-        <h2 class="title green">💰 赏金任务中心</h2>
-        <div id="bounty-list" class="task-grid"></div>
-    </section>
-    </main>
+        <main id="main">
+            <section id="voynich" class="category-section active">
+                <h2 class="title gold">伏尼契手稿 (Voynich)</h2>
+                <div id="voynich-list" class="task-grid">
+                    <p class="loading">📡 正在同步猎人情报...</p>
+                </div>
+            </section>
+
+            <section id="memes" class="category-section">
+                <h2 class="title blue">动漫 Memes 发源地</h2>
+                <div id="memes-list" class="task-grid">
+                    </div>
+            </section>
+
+            <section id="post" class="category-section">
+                <h2 class="title green">发布你的悬赏</h2>
+                <div class="post-card">
+                    <p>你也有无法解开的谜题？</p>
+                    <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn green-btn">联系馆长发布任务</a>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
