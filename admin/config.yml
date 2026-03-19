@@ -1,19 +1,19 @@
 backend:
-  name: git-gateway  # 改成这个，就不需要配置复杂的 OAuth 了
-  branch: main
+  name: git-gateway
+  branch: main # 确保这里和你 GitHub 的分支名一致
 
-media_folder: "images"
+media_folder: "images" # 图片会自动存入这个文件夹
 public_folder: "images"
 
 collections:
   - name: "tasks"
     label: "悬赏任务"
-    folder: "tasks"
+    folder: "tasks" # 任务数据会存入 tasks 文件夹
     create: true
     extension: "json"
     format: "json"
     fields:
-      - { label: "编号", name: "id", widget: "string" }
-      - { label: "描述", name: "desc", widget: "text" }
-      - { label: "图片", name: "img", widget: "image" }
-      - { label: "金额", name: "price", widget: "string" }
+      - { label: "任务编号", name: "id", widget: "string" }
+      - { label: "描述文字", name: "desc", widget: "text" }
+      - { label: "上传图片", name: "img", widget: "image" }
+      - { label: "赏金金额", name: "price", widget: "string" }
