@@ -2,14 +2,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const onlineEl = document.getElementById('online-num');
     const newsEl = document.getElementById('news-text');
 
-    // 1. 动态情报库
-    const newsPool = [
-        "📡 正在同步全球猎人节点... 系统监测到新的情报上传...",
-        "🔍 [秘闻]：f18v 的根部结构与某种已灭绝的地衣高度相似...",
-        "💰 恭喜猎人 [A_7] 成功解析 f03v 获得赏金！",
-        "⚡ 警告：破解算法负载达到 92%，正在调度分布式节点...",
-        "📜 馆长：新的绝密档案已上传，请诸位猎人加紧解析。"
-    ];
+    const newsPool = ["📡 正在同步全球猎人节点...", "🔍 发现 f18v 的新线索...", "💰 赏金大厅今日已发放 $1,200 奖金...", "⚡ 警告：破解算法负载异常升高..."];
 
     async function loadTasks() {
         const categoryLists = ['voynich-list', 'game-list', 'crack-list', 'progress-list', 'bounty-list'];
@@ -18,7 +11,7 @@ window.addEventListener('DOMContentLoaded', () => {
         const ids = Array.from({length: 150}, (_, i) => `f${i+1}v`);
         let stats = { hunting: 0, completed: 0 };
 
-        // 异步并行读取所有 JSON
+        // 强力抓取逻辑
         const results = await Promise.all(ids.map(id => 
             fetch(`./tasks/${id}.json`).then(res => res.ok ? res.json() : null).catch(() => null)
         ));
@@ -26,19 +19,20 @@ window.addEventListener('DOMContentLoaded', () => {
         results.forEach(data => {
             if (!data) return;
 
-            const isDone = data.status === "已结案";
+            const isDone = (data.status === "已结案");
             if (isDone) stats.completed++; else stats.hunting++;
 
-            const targetListId = isDone ? 'bounty-list' : `${data.category || 'voynich'}-list`;
-            const listContainer = document.getElementById(targetListId);
+            // 归档判断：只要是已结案，全部塞进 bounty-list
+            const targetId = isDone ? 'bounty-list' : `${data.category || 'voynich'}-list`;
+            const listContainer = document.getElementById(targetId);
             
             if (listContainer) {
                 const tagColor = isDone ? "#ff9800" : "#27ae60";
                 const card = `
                     <div class="card" style="${isDone ? 'border-left: 5px solid #ff9800; opacity: 0.8;' : ''}">
-                        <img src="${data.img}" onclick="view(this.src)" onerror="this.src='https://via.placeholder.com/160?text=图片解析中...'">
+                        <img src="${data.img}" onclick="view(this.src)" onerror="this.src='https://via.placeholder.com/160?text=图片加载失败'">
                         <div class="info">
-                            <h3>编号：${data.id} <span class="tag" style="background:${tagColor}">${data.status || '寻找中'}</span></h3>
+                            <h3>编号：${data.id} <span class="tag" style="background:${tagColor}">${data.status}</span></h3>
                             <p>${data.desc}</p>
                             <div class="price">${isDone ? '<span style="color:#ff9800">💰 赏金已结算</span>' : '赏金：' + data.price}</div>
                             ${isDone ? '<div class="done-stamp">SEALED / 已封卷</div>' : `<a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">📥 提交证据</a>`}
@@ -67,19 +61,14 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 更新情报条内容
+    if(onlineEl) setInterval(() => { onlineEl.innerText = Math.floor(Math.random()*15)+40; }, 4000);
     setInterval(() => {
         if(newsEl) {
             newsEl.style.opacity = 0;
-            setTimeout(() => {
-                newsEl.innerText = newsPool[Math.floor(Math.random()*newsPool.length)];
-                newsEl.style.opacity = 1;
-            }, 500);
+            setTimeout(() => { newsEl.innerText = newsPool[Math.floor(Math.random()*newsPool.length)]; newsEl.style.opacity = 1; }, 500);
         }
     }, 12000);
 
-    if(onlineEl) setInterval(() => { onlineEl.innerText = Math.floor(Math.random()*15)+40; }, 4000);
-    
     loadTasks();
 });
 
