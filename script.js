@@ -2,46 +2,57 @@ window.addEventListener('DOMContentLoaded', () => {
     const onlineEl = document.getElementById('online-num');
 
     async function loadTasks() {
+        // 1. 清空所有列表（确保 ID 存在）
         const categoryLists = ['voynich-list', 'game-list', 'crack-list', 'progress-list', 'bounty-list'];
-        categoryLists.forEach(id => { if(document.getElementById(id)) document.getElementById(id).innerHTML = ''; });
+        categoryLists.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = '';
+        });
 
+        // 2. 定义要扫描的编号（f1v 到 f150v）
         const ids = Array.from({length: 150}, (_, i) => `f${i+1}v`);
         let stats = { hunting: 0, completed: 0 };
 
-        // 1. 抓取所有 JSON 数据
+        // 3. 异步抓取
         const promises = ids.map(id => 
-            fetch(`./tasks/${id}.json?t=${Date.now()}`).then(res => res.ok ? res.json() : null).catch(() => null)
+            fetch(`./tasks/${id}.json`) // 恢复最简单的路径
+                .then(res => res.ok ? res.json() : null)
+                .catch(() => null)
         );
 
         const results = await Promise.all(promises);
 
-        // 2. 遍历结果进行统计与渲染
         results.forEach(data => {
             if (!data) return;
 
             const isDone = data.status === "已结案";
             if (isDone) stats.completed++; else stats.hunting++;
 
-            // 分流：已结案去档案馆，否则去原分类
-            const targetListId = isDone ? 'bounty-list' : `${data.category || 'voynich'}-list`;
-            const tagColor = isDone ? "#ff9800" : "#27ae60";
-
-            const card = `
-                <div class="card" style="${isDone ? 'border-left: 5px solid #ff9800; opacity: 0.8;' : ''}">
-                    <img src="${data.img}" onclick="view(this.src)" onerror="this.src='https://via.placeholder.com/160?text=档案解析中...'">
-                    <div class="info">
-                        <h3>编号：${data.id} <span class="tag" style="background:${tagColor}">${data.status || '寻找中'}</span></h3>
-                        <p>${data.desc}</p>
-                        <div class="price">${isDone ? '<span style="color:#ff9800">💰 赏金已发放</span>' : '赏金：' + data.price}</div>
-                        ${isDone ? '<div class="done-stamp">SEALED / 已封卷</div>' : `<a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">📥 提交证据</a>`}
-                    </div>
-                </div>`;
-
+            // 自动归类逻辑
+            let targetListId = isDone ? 'bounty-list' : `${data.category || 'voynich'}-list`;
             const listContainer = document.getElementById(targetListId);
-            if (listContainer) listContainer.insertAdjacentHTML('beforeend', card);
+            
+            if (listContainer) {
+                const tagColor = isDone ? "#ff9800" : "#27ae60";
+                
+                // 🛠️ 修复：如果 JSON 里没写 img 路径，或者路径不对，尝试自动匹配
+                let imgSrc = data.img;
+                
+                const card = `
+                    <div class="card" style="${isDone ? 'border-left: 5px solid #ff9800; opacity: 0.8;' : ''}">
+                        <img src="${imgSrc}" onclick="view(this.src)" onerror="this.src='https://via.placeholder.com/160?text=档案解析中...'">
+                        <div class="info">
+                            <h3>编号：${data.id} <span class="tag" style="background:${tagColor}">${data.status || '寻找中'}</span></h3>
+                            <p>${data.desc}</p>
+                            <div class="price">${isDone ? '<span style="color:#ff9800">💰 赏金已发放</span>' : '赏金：' + data.price}</div>
+                            ${isDone ? '<div class="done-stamp">SEALED / 已封卷</div>' : `<a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">📥 提交证据</a>`}
+                        </div>
+                    </div>`;
+                listContainer.insertAdjacentHTML('beforeend', card);
+            }
         });
 
-        // 3. 数据抓取完毕，最后更新饼图
+        // 4. 更新饼图
         updateChart(stats.hunting, stats.completed);
     }
 
@@ -62,7 +73,11 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    setInterval(() => { if(onlineEl) onlineEl.innerText = Math.floor(Math.random()*15)+40; }, 4000);
+    // 在线人数随机跳动
+    if(onlineEl) {
+        setInterval(() => { onlineEl.innerText = Math.floor(Math.random()*15)+40; }, 4000);
+    }
+    
     loadTasks();
 });
 
