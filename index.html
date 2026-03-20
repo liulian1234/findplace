@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>赏金大厅 - 猎人中心</title>
+    <title>伏尼契赏金大厅 - 秘密档案中心</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 </head>
@@ -19,9 +19,13 @@
         <div class="nav-item" onclick="switchCat('post', this)">✉️ 发布赏金</div>
     </nav>
 
+    <div id="news-ticker">
+        <div class="ticker-content" id="news-text">📡 正在同步全球猎人节点... 系统监测到 f21v 的新线索... 赏金大厅今日已发放 $1,200 奖金...</div>
+    </div>
+
     <div id="container">
         <aside id="sidebar">
-            <h3>📊 任务情报站</h3>
+            <h3 class="sidebar-title">📊 任务情报站</h3>
             <div class="stat-grid">
                 <div class="stat-box">
                     <span class="stat-val">128</span>
@@ -32,38 +36,32 @@
                     <span class="stat-lab">在线人数</span>
                 </div>
             </div>
-            <div id="chart" style="height: 200px;"></div>
-            <hr>
-          <div class="notice-box">
-    <div style="margin-bottom: 20px;">
-        <b style="color: var(--gold); font-size: 1.1em;">📜 馆长的叮嘱：</b><br>
-        <p style="margin: 8px 0; line-height: 1.6; color: #555;">
-            漫长的搜寻终有尽头。当你揭开这些植物或密码的真面目时，请通过“提交证据”联系我。
-            审核通过后，相应的赏金将通过加密频道发放。已结案的谜题，将成为我们共同的勋章。
-        </p>
-    </div>
-
-    <hr style="border: 0; border-top: 1px dashed #ddd; margin: 15px 0;">
-
-    <div>
-        <b style="color: var(--gold); font-size: 1.1em;">💰 赏金说明：</b><br>
-        <ul style="padding-left: 18px; margin: 8px 0; list-style-type: none;">
-            <li style="margin-bottom: 5px;">📍 <b>状态：</b>显示“寻找中”即可参与。</li>
-            <li style="margin-bottom: 5px;">✅ <b>结算：</b>雇主审核通过后立即发放。</li>
-            <li style="margin-bottom: 5px;">📁 <b>归档：</b>已结案任务仅供展示。</li>
-            <li style="margin-bottom: 5px;">⚡ <b>提速：</b>描述越精准，结案越快。</li>
-        </ul>
-    </div>
-</div>
+            <div id="chart" style="height: 180px;"></div>
+            
+            <div class="notice-box">
+                <b class="notice-title">📜 馆长的叮嘱：</b>
+                <p class="notice-text">
+                    漫长的搜寻终有尽头。当你揭开这些植物或密码的真面目时，请通过“提交证据”联系我。 
+                    赏金将通过加密频道发放。已结案的谜题，将成为我们共同的勋章。
+                </p>
+                <hr class="notice-hr">
+                <b class="notice-title">💰 赏金说明：</b>
+                <div class="notice-list">
+                    📍 <b>状态：</b>显示“寻找中”即可参与。<br>
+                    ✅ <b>结算：</b>雇主审核通过后发放。<br>
+                    📁 <b>归档：</b>已结案任务仅供展示。<br>
+                    ⚡ <b>提速：</b>描述越精准，结案越快。
+                </div>
+            </div>
         </aside>
 
         <main id="main">
             <section id="voynich" class="category-section active"><h2 class="title gold">伏尼契手稿 (Voynich)</h2><div id="voynich-list" class="task-grid"></div></section>
             <section id="game" class="category-section"><h2 class="title blue">🎮 游戏任务大厅</h2><div id="game-list" class="task-grid"></div></section>
             <section id="crack" class="category-section"><h2 class="title purple">🔓 破解任务终端</h2><div id="crack-list" class="task-grid"></div></section>
-            <section id="progress" class="category-section"><h2 class="title" style="border-left: 5px solid #34495e;">⏳ 实时破解进度</h2><div id="progress-list" class="task-grid"></div></section>
-            <section id="bounty" class="category-section"><h2 class="title green">💰 赏金档案馆 (已结案)</h2><div id="bounty-list" class="task-grid"></div></section>
-            <section id="post" class="category-section"><h2 class="title green">发布悬赏</h2><div class="post-card"><a href="#" class="btn green-btn">联系馆长发布任务</a></div></section>
+            <section id="progress" class="category-section"><h2 class="title silver">⏳ 实时破解进度</h2><div id="progress-list" class="task-grid"></div></section>
+            <section id="bounty" class="category-section"><h2 class="title done">💰 赏金档案馆 (已结案)</h2><div id="bounty-list" class="task-grid"></div></section>
+            <section id="post" class="category-section"><h2 class="title green">发布悬赏</h2><div class="post-card"><p>需要发动全网猎人的力量？</p><a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn green-btn">联系馆长发布任务</a></div></section>
         </main>
     </div>
     <script src="script.js"></script>
