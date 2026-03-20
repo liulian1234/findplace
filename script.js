@@ -1,26 +1,27 @@
 window.addEventListener('DOMContentLoaded', () => {
     const onlineEl = document.getElementById('online-num');
+    const newsEl = document.getElementById('news-text');
+
+    // 1. 动态情报库
+    const newsPool = [
+        "📡 正在同步全球猎人节点... 系统监测到新的情报上传...",
+        "🔍 [秘闻]：f18v 的根部结构与某种已灭绝的地衣高度相似...",
+        "💰 恭喜猎人 [A_7] 成功解析 f03v 获得赏金！",
+        "⚡ 警告：破解算法负载达到 92%，正在调度分布式节点...",
+        "📜 馆长：新的绝密档案已上传，请诸位猎人加紧解析。"
+    ];
 
     async function loadTasks() {
-        // 1. 清空所有列表（确保 ID 存在）
         const categoryLists = ['voynich-list', 'game-list', 'crack-list', 'progress-list', 'bounty-list'];
-        categoryLists.forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.innerHTML = '';
-        });
+        categoryLists.forEach(id => { if(document.getElementById(id)) document.getElementById(id).innerHTML = ''; });
 
-        // 2. 定义要扫描的编号（f1v 到 f150v）
         const ids = Array.from({length: 150}, (_, i) => `f${i+1}v`);
         let stats = { hunting: 0, completed: 0 };
 
-        // 3. 异步抓取
-        const promises = ids.map(id => 
-            fetch(`./tasks/${id}.json`) // 恢复最简单的路径
-                .then(res => res.ok ? res.json() : null)
-                .catch(() => null)
-        );
-
-        const results = await Promise.all(promises);
+        // 异步并行读取所有 JSON
+        const results = await Promise.all(ids.map(id => 
+            fetch(`./tasks/${id}.json`).then(res => res.ok ? res.json() : null).catch(() => null)
+        ));
 
         results.forEach(data => {
             if (!data) return;
@@ -28,31 +29,24 @@ window.addEventListener('DOMContentLoaded', () => {
             const isDone = data.status === "已结案";
             if (isDone) stats.completed++; else stats.hunting++;
 
-            // 自动归类逻辑
-            let targetListId = isDone ? 'bounty-list' : `${data.category || 'voynich'}-list`;
+            const targetListId = isDone ? 'bounty-list' : `${data.category || 'voynich'}-list`;
             const listContainer = document.getElementById(targetListId);
             
             if (listContainer) {
                 const tagColor = isDone ? "#ff9800" : "#27ae60";
-                
-                // 🛠️ 修复：如果 JSON 里没写 img 路径，或者路径不对，尝试自动匹配
-                let imgSrc = data.img;
-                
                 const card = `
                     <div class="card" style="${isDone ? 'border-left: 5px solid #ff9800; opacity: 0.8;' : ''}">
-                        <img src="${imgSrc}" onclick="view(this.src)" onerror="this.src='https://via.placeholder.com/160?text=档案解析中...'">
+                        <img src="${data.img}" onclick="view(this.src)" onerror="this.src='https://via.placeholder.com/160?text=图片解析中...'">
                         <div class="info">
                             <h3>编号：${data.id} <span class="tag" style="background:${tagColor}">${data.status || '寻找中'}</span></h3>
                             <p>${data.desc}</p>
-                            <div class="price">${isDone ? '<span style="color:#ff9800">💰 赏金已发放</span>' : '赏金：' + data.price}</div>
+                            <div class="price">${isDone ? '<span style="color:#ff9800">💰 赏金已结算</span>' : '赏金：' + data.price}</div>
                             ${isDone ? '<div class="done-stamp">SEALED / 已封卷</div>' : `<a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">📥 提交证据</a>`}
                         </div>
                     </div>`;
                 listContainer.insertAdjacentHTML('beforeend', card);
             }
         });
-
-        // 4. 更新饼图
         updateChart(stats.hunting, stats.completed);
     }
 
@@ -73,10 +67,18 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 在线人数随机跳动
-    if(onlineEl) {
-        setInterval(() => { onlineEl.innerText = Math.floor(Math.random()*15)+40; }, 4000);
-    }
+    // 更新情报条内容
+    setInterval(() => {
+        if(newsEl) {
+            newsEl.style.opacity = 0;
+            setTimeout(() => {
+                newsEl.innerText = newsPool[Math.floor(Math.random()*newsPool.length)];
+                newsEl.style.opacity = 1;
+            }, 500);
+        }
+    }, 12000);
+
+    if(onlineEl) setInterval(() => { onlineEl.innerText = Math.floor(Math.random()*15)+40; }, 4000);
     
     loadTasks();
 });
