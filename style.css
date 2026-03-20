@@ -6,41 +6,40 @@
 
 body { font-family: 'PingFang SC', sans-serif; background: var(--bg); color: var(--text); margin: 0; overflow-x: hidden; }
 
-/* 导航栏 */
-#nav-bar { 
-    background: rgba(10, 10, 12, 0.9); height: 60px; display: flex; 
-    padding: 0 20px; position: fixed; top: 0; width: 100%; z-index: 1100; 
-    border-bottom: 1px solid #222; box-sizing: border-box; align-items: center;
-}
+#nav-bar { background: rgba(10, 10, 12, 0.9); height: 60px; display: flex; padding: 0 20px; position: fixed; top: 0; width: 100%; z-index: 1100; border-bottom: 1px solid #222; align-items: center; box-sizing: border-box; }
 .nav-item { color: var(--text-dim); padding: 0 15px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-.nav-item:hover, .nav-item.active { color: #fff; }
-.nav-item.active { border-bottom: 2px solid var(--gold); }
+.nav-item.active { color: #fff; border-bottom: 2px solid var(--gold); }
 
-.auth-link { margin-left: auto; color: var(--gold); text-decoration: none; font-size: 13px; border: 1px solid var(--gold); padding: 5px 12px; border-radius: 4px; transition: 0.3s; margin-right: 10px; }
+.auth-link { margin-left: auto; color: var(--gold); text-decoration: none; border: 1px solid var(--gold); padding: 5px 12px; border-radius: 4px; font-size: 13px; transition: 0.3s; }
 .auth-link:hover { background: var(--gold); color: #fff; }
 
-/* 📡 重新加回来的滚动条样式 */
-#news-ticker { 
-    background: #000; color: var(--gold); font-size: 12px; height: 30px; line-height: 30px; 
-    border-bottom: 1px solid #222; position: fixed; top: 60px; width: 100%; z-index: 1000; 
-    overflow: hidden; white-space: nowrap; 
-}
-.ticker-content { display: inline-block; animation: ticker 40s linear infinite; padding-left: 100%; transition: opacity 0.5s; }
+#news-ticker { background: #000; color: var(--gold); font-size: 12px; height: 30px; line-height: 30px; border-bottom: 1px solid #222; position: fixed; top: 60px; width: 100%; z-index: 1000; overflow: hidden; }
+.ticker-content { display: inline-block; animation: ticker 40s linear infinite; padding-left: 100%; }
 @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-100%); } }
 
-/* 布局调整：让位给 60px 导航 + 30px 滚动条 */
 #container { display: flex; margin-top: 90px; }
 #sidebar { width: 320px; background: var(--main); height: calc(100vh - 90px); position: fixed; padding: 25px; border-right: 1px solid #222; box-sizing: border-box; overflow-y: auto; }
 #main { margin-left: 320px; padding: 40px; width: calc(100% - 320px); box-sizing: border-box; }
 
-/* 卡片与结案审美 */
-.card { background: var(--card-bg); border-radius: 12px; padding: 20px; margin-bottom: 20px; display: flex; align-items: center; border: 1px solid #2a2a2e; position: relative; transition: 0.3s; }
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+.stat-box { background: #16161a; padding: 15px; border-radius: 8px; text-align: center; border: 1px solid #25252a; }
+.stat-val { font-size: 22px; font-weight: bold; color: var(--gold); display: block; }
+.notice-box { background: #151310; border: 1px solid #33281e; padding: 20px; border-radius: 8px; margin-top: 20px; }
+.notice-title { color: var(--gold); }
+
+.card { background: var(--card-bg); border-radius: 12px; padding: 20px; margin-bottom: 20px; display: flex; align-items: center; border: 1px solid #2a2a2e; position: relative; }
 .card img { width: 160px; height: 160px; border-radius: 10px; object-fit: cover; margin-right: 25px; cursor: zoom-in; }
 .title { border-left: 5px solid; padding-left: 12px; margin-bottom: 30px; }
-.title.gold { border-color: var(--gold); }
 .title.orange { border-color: var(--orange-done); color: var(--orange-done); }
 
-.done-stamp { position: absolute; right: 30px; bottom: 20px; border: 3px solid var(--orange-done); color: var(--orange-done); padding: 4px 12px; transform: rotate(-15deg); font-weight: bold; border-radius: 4px; opacity: 0.6; pointer-events: none; }
+.price { color: var(--gold); font-weight: bold; font-size: 1.4em; }
+.tag { color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px; margin-left: 10px; }
+.btn { background: var(--gold); color: white; padding: 8px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; }
+
+.done-stamp { position: absolute; right: 30px; bottom: 20px; border: 3px solid var(--orange-done); color: var(--orange-done); padding: 4px 12px; transform: rotate(-15deg); font-weight: bold; border-radius: 4px; opacity: 0.6; }
 
 .category-section { display: none; }
 .category-section.active { display: block; }
+
+#viewer { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; }
+#viewer-img { max-width: 90%; max-height: 85%; }
