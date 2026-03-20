@@ -2,7 +2,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const onlineEl = document.getElementById('online-num');
     const newsEl = document.getElementById('news-text');
 
-    // 1. 恢复你以前的滚动情报（诗意聊天）
+    // 诗意情报内容
     const newsPool = [
         "📡 正在同步全球猎人节点... 系统监测到新的情报上传...",
         "🔍 [秘闻]：f18v 的花苞结构疑似具备捕食性特征...",
@@ -18,7 +18,7 @@ window.addEventListener('DOMContentLoaded', () => {
         const ids = Array.from({length: 150}, (_, i) => `f${i+1}v`);
         let stats = { hunting: 0, completed: 0 };
 
-        // 使用 Promise.all 确保所有文件都被检测到
+        // 使用相对路径读取 ./tasks/
         const results = await Promise.all(ids.map(id => 
             fetch(`./tasks/${id}.json`).then(res => res.ok ? res.json() : null).catch(() => null)
         ));
@@ -26,18 +26,17 @@ window.addEventListener('DOMContentLoaded', () => {
         results.forEach(data => {
             if (!data) return;
 
-            // 关键修复：兼容不同格式的“已结案”判断
-            const isDone = data.status === "已结案" || data.status === "已完成";
+            const isDone = (data.status === "已结案");
             if (isDone) stats.completed++; else stats.hunting++;
 
-            // 确保已结案的一定去 bounty-list
+            // 逻辑：已结案去档案馆，否则去原分类
             const targetId = isDone ? 'bounty-list' : `${data.category || 'voynich'}-list`;
             const listContainer = document.getElementById(targetId);
             
             if (listContainer) {
                 const tagColor = isDone ? "#ff9800" : "#27ae60";
                 const card = `
-                    <div class="card" style="${isDone ? 'border-left: 5px solid #ff9800;' : ''}">
+                    <div class="card" style="${isDone ? 'border-left: 5px solid #ff9800; opacity: 0.8;' : ''}">
                         <img src="${data.img}" onclick="view(this.src)" onerror="this.src='https://via.placeholder.com/160?text=图片解析中...'">
                         <div class="info">
                             <h3>编号：${data.id} <span class="tag" style="background:${tagColor}">${data.status}</span></h3>
@@ -49,7 +48,6 @@ window.addEventListener('DOMContentLoaded', () => {
                 listContainer.insertAdjacentHTML('beforeend', card);
             }
         });
-        // 更新你最喜欢的饼图
         updateChart(stats.hunting, stats.completed);
     }
 
@@ -70,10 +68,10 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 恢复在线人数随机跳动
+    // 在线人数随机化
     setInterval(() => { if(onlineEl) onlineEl.innerText = Math.floor(Math.random()*15)+40; }, 4000);
     
-    // 恢复滚动情报内容轮播
+    // 轮播情报
     setInterval(() => {
         if(newsEl) {
             newsEl.style.opacity = 0;
