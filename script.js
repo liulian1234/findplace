@@ -2,14 +2,12 @@ window.addEventListener('DOMContentLoaded', () => {
     const onlineEl = document.getElementById('online-num');
     
     async function loadTasks() {
-        // 1. 清理所有容器
         const categoryLists = ['voynich-list', 'game-list', 'crack-list', 'progress-list', 'bounty-list'];
         categoryLists.forEach(id => {
             const el = document.getElementById(id);
             if(el) el.innerHTML = '';
         });
 
-        // 2. 遍历加载 (1-150号)
         const ids = Array.from({length: 150}, (_, i) => `f${i+1}v`);
         let stats = { hunting: 0, completed: 0 };
 
@@ -22,12 +20,12 @@ window.addEventListener('DOMContentLoaded', () => {
                 const isDone = data.status === "已结案";
                 if (isDone) stats.completed++; else stats.hunting++;
 
-                // 3. 自动分流逻辑：已结案的全部进入 bounty-list，否则进入原分类
+                // 归档逻辑：已结案去 bounty，否则去原 category
                 const targetListId = isDone ? 'bounty-list' : `${data.category || 'voynich'}-list`;
                 const tagColor = isDone ? "#7f8c8d" : "#27ae60";
 
                 const card = `
-                    <div class="card" style="${isDone ? 'opacity: 0.85; border-left: 5px solid #7f8c8d;' : ''}">
+                    <div class="card" style="${isDone ? 'opacity: 0.8; border-left: 5px solid #7f8c8d;' : ''}">
                         <img src="${data.img}" onclick="view(this.src)" onerror="this.src='https://via.placeholder.com/160?text=图片加载中'">
                         <div class="info">
                             <h3>编号：${data.id} <span class="tag" style="background:${tagColor}">${data.status || '寻找中'}</span></h3>
@@ -60,7 +58,11 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    setInterval(() => { if(onlineEl) onlineEl.innerText = Math.floor(Math.random()*15)+40; }, 4000);
+    // 补回：在线人数随机跳动逻辑
+    setInterval(() => { 
+        if(onlineEl) onlineEl.innerText = Math.floor(Math.random()*15)+40; 
+    }, 4000);
+    
     loadTasks();
 });
 
