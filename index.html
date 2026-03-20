@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>伏尼契赏金大厅 - 秘密档案中心</title>
+    <title>伏尼契赏金大厅</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 </head>
 <body>
     <div id="viewer" onclick="this.style.display='none'"><img id="viewer-img"></div>
@@ -19,42 +17,21 @@
         <div class="nav-item" onclick="switchCat('progress', this)">⏳ 破解进度</div>
         <div class="nav-item" onclick="switchCat('bounty', this)">💰 赏金任务(已结案)</div>
         <div class="nav-item" onclick="switchCat('post', this)">✉️ 发布赏金</div>
+        <a href="https://你的注册登录页面地址" class="auth-link">🔑 猎人登录/注册</a>
     </nav>
-
-    <div id="news-ticker">
-        <div class="ticker-content" id="news-text">📡 正在同步全球猎人节点... 系统监测到新的情报上传...</div>
-    </div>
 
     <div id="container">
         <aside id="sidebar">
-            <div id="auth-section" class="notice-box" style="margin-bottom: 20px; border-color: #3498db;">
-                <div id="user-logged-out">
-                    <b style="color: #3498db; font-size: 14px;">🔑 猎人终端</b>
-                    <p style="font-size: 11px; color: #888; margin: 5px 0;">加入协会，同步你的破解功勋。</p>
-                    <input type="email" id="email" placeholder="加密邮箱" class="auth-input">
-                    <input type="password" id="password" placeholder="通行口令" class="auth-input">
-                    <div style="margin-top: 10px; display: flex; gap: 5px;">
-                        <button onclick="handleSignUp()" class="auth-btn" style="background: #444;">注册</button>
-                        <button onclick="handleLogin()" class="auth-btn" style="background: #3498db; flex: 1;">进入终端</button>
-                    </div>
-                </div>
-                <div id="user-logged-in" style="display: none;">
-                    <b style="color: #27ae60; font-size: 14px;">👤 身份已确认</b>
-                    <p id="user-email" style="font-size: 12px; margin: 8px 0; color: #bbb; overflow: hidden; text-overflow: ellipsis;"></p>
-                    <button onclick="handleLogout()" class="auth-btn" style="background: #c0392b; width: 100%;">断开连接</button>
-                </div>
-            </div>
-
             <h3 class="sidebar-title">📊 任务情报站</h3>
             <div class="stat-grid">
                 <div class="stat-box"><span class="stat-val">128</span><span class="stat-lab">参与猎人</span></div>
                 <div class="stat-box"><span class="stat-val" id="online-num">--</span><span class="stat-lab">在线人数</span></div>
             </div>
-            <div id="chart" style="height: 180px;"></div>
+            <div id="chart" style="height: 200px;"></div>
             
             <div class="notice-box">
-                <b class="notice-title">📜 馆长的叮嘱：</b>
-                <p class="notice-text">漫长的搜寻终有尽头。当你揭开秘密时，请通过“提交证据”联系我。赏金将通过加密频道发放。</p>
+                <b>📜 馆长的叮嘱：</b><br>
+                漫长的搜寻终有尽头。当你揭开秘密时，请通过“提交证据”联系我。赏金将通过加密频道发放。已结案的谜题，将成为我们共同的勋章。
             </div>
         </aside>
 
