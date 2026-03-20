@@ -2,14 +2,14 @@ window.addEventListener('DOMContentLoaded', () => {
     const onlineEl = document.getElementById('online-num');
     
     async function loadTasks() {
-        // 清理所有列表容器
+        // 1. 清理所有容器
         const categoryLists = ['voynich-list', 'game-list', 'crack-list', 'progress-list', 'bounty-list'];
         categoryLists.forEach(id => {
             const el = document.getElementById(id);
             if(el) el.innerHTML = '';
         });
 
-        // 彻底解决 f01v：只循环标准编号 f1v, f2v...
+        // 2. 遍历加载 (1-150号)
         const ids = Array.from({length: 150}, (_, i) => `f${i+1}v`);
         let stats = { hunting: 0, completed: 0 };
 
@@ -22,22 +22,22 @@ window.addEventListener('DOMContentLoaded', () => {
                 const isDone = data.status === "已结案";
                 if (isDone) stats.completed++; else stats.hunting++;
 
-                // 颜色设定：结案为橙色 #ff9800
-                const tagColor = isDone ? "#ff9800" : "#27ae60";
+                // 3. 自动分流逻辑：已结案的全部进入 bounty-list，否则进入原分类
+                const targetListId = isDone ? 'bounty-list' : `${data.category || 'voynich'}-list`;
+                const tagColor = isDone ? "#7f8c8d" : "#27ae60";
 
                 const card = `
-                    <div class="card">
+                    <div class="card" style="${isDone ? 'opacity: 0.85; border-left: 5px solid #7f8c8d;' : ''}">
                         <img src="${data.img}" onclick="view(this.src)" onerror="this.src='https://via.placeholder.com/160?text=图片加载中'">
                         <div class="info">
                             <h3>编号：${data.id} <span class="tag" style="background:${tagColor}">${data.status || '寻找中'}</span></h3>
                             <p>${data.desc}</p>
-                            <div class="price">${isDone ? '💰 赏金已发放' : '赏金：' + data.price}</div>
-                            ${isDone ? '' : `<a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">📥 提交证据</a>`}
+                            <div class="price">${isDone ? '<span style="color:#7f8c8d">💰 赏金已发放</span>' : '赏金：' + data.price}</div>
+                            ${isDone ? '<div class="done-stamp">SEALED / 已封卷</div>' : `<a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">📥 提交证据</a>`}
                         </div>
                     </div>`;
 
-                const cat = data.category || 'voynich';
-                const listContainer = document.getElementById(`${cat}-list`);
+                const listContainer = document.getElementById(targetListId);
                 if (listContainer) listContainer.insertAdjacentHTML('beforeend', card);
             } catch (e) {}
         }
@@ -53,7 +53,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 type: 'pie', radius: ['40%', '70%'],
                 data: [
                     { value: h, name: '寻找中', itemStyle: { color: '#27ae60' } },
-                    { value: c, name: '已结案', itemStyle: { color: '#ff9800' } }
+                    { value: c, name: '已结案', itemStyle: { color: '#7f8c8d' } }
                 ],
                 label: { show: false }
             }]
