@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>伏尼契赏金大厅</title>
+    <title>伏尼契赏金大厅 - 秘密档案中心</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 </head>
@@ -17,25 +17,34 @@
         <div class="nav-item" onclick="switchCat('progress', this)">⏳ 破解进度</div>
         <div class="nav-item" onclick="switchCat('bounty', this)">💰 赏金任务(已结案)</div>
         <div class="nav-item" onclick="switchCat('post', this)">✉️ 发布赏金</div>
-        <a href="这里填你的注册链接" class="auth-link">🔑 猎人登录/注册</a>
+        <a href="https://your-login-page.com" class="auth-link">🔑 猎人登录/注册</a>
     </nav>
 
     <div id="news-ticker">
-        <div class="ticker-content" id="news-text">📡 正在同步全球猎人节点... [ID:72*] 提交了 f18v 的新线索... 系统监测到 f12v 赏金已结算...</div>
+        <div class="ticker-content" id="news-text">📡 正在同步全球猎人节点... 系统监测到新的情报上传...</div>
     </div>
 
     <div id="container">
         <aside id="sidebar">
             <h3 class="sidebar-title">📊 任务情报站</h3>
             <div class="stat-grid">
-                <div class="stat-box"><span class="stat-val">128</span><span class="stat-lab">参与猎人</span></div>
-                <div class="stat-box"><span class="stat-val" id="online-num">--</span><span class="stat-lab">在线人数</span></div>
+                <div class="stat-box">
+                    <span class="stat-val">128</span>
+                    <span class="stat-lab">参与猎人</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-val" id="online-num">--</span>
+                    <span class="stat-lab">在线人数</span>
+                </div>
             </div>
-            <div id="chart" style="height: 200px;"></div>
+            <div id="chart" style="height: 180px;"></div>
             
             <div class="notice-box">
-                <b>📜 馆长的叮嘱：</b><br>
-                漫长的搜寻终有尽头。当你揭开秘密时，请通过“提交证据”联系我。赏金将通过加密频道发放。已结案的谜题，将成为我们共同的勋章。
+                <b class="notice-title">📜 馆长的叮嘱：</b>
+                <p class="notice-text">
+                    漫长的搜寻终有尽头。当你揭开这些植物或密码的真面目时，请通过“提交证据”联系我。 
+                    赏金将通过加密频道发放。已结案的谜题，将成为我们共同的勋章。
+                </p>
             </div>
         </aside>
 
