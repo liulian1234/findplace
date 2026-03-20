@@ -2,17 +2,14 @@ window.addEventListener('DOMContentLoaded', () => {
     const onlineEl = document.getElementById('online-num');
     const newsEl = document.getElementById('news-text');
 
-    // 1. 动态情报库
     const newsPool = [
         "📡 系统监测到 3 名新猎人进入了 [伏尼契手稿] 区域...",
         "🔍 [秘闻]：f18v 的花苞结构疑似具备捕食性特征...",
         "💰 恭喜猎人 [K_92] 成功提交 f02v 关键证据！奖金已汇出...",
         "⚡ 警告：破解算法负载异常升高，正在分配云端节点...",
-        "📜 馆长：新的绝密档案已上传，请诸位猎人加紧解析...",
-        "⏳ 进度更新：[破解进度] 板块新增 2 项未解谜题..."
+        "📜 馆长：新的绝密档案已上传，请诸位猎人加紧解析..."
     ];
 
-    // 2. 加载任务
     async function loadTasks() {
         const categoryLists = ['voynich-list', 'game-list', 'crack-list', 'progress-list', 'bounty-list'];
         categoryLists.forEach(id => { if(document.getElementById(id)) document.getElementById(id).innerHTML = ''; });
@@ -20,38 +17,44 @@ window.addEventListener('DOMContentLoaded', () => {
         const ids = Array.from({length: 150}, (_, i) => `f${i+1}v`);
         let stats = { hunting: 0, completed: 0 };
 
-        for (const id of ids) {
-            try {
-                const res = await fetch(`./tasks/${id}.json?t=${Date.now()}`);
-                if (!res.ok) continue;
-                const data = await res.json();
+        // 使用 Promise.all 确保所有数据抓取完成后再统计
+        const tasks = ids.map(id => 
+            fetch(`./tasks/${id}.json?t=${Date.now()}`).then(res => res.ok ? res.json() : null).catch(() => null)
+        );
 
-                const isDone = data.status === "已结案";
-                if (isDone) stats.completed++; else stats.hunting++;
+        const results = await Promise.all(tasks);
 
-                // 分流逻辑：已结案去赏金档案馆，否则去原分类
-                const targetListId = isDone ? 'bounty-list' : `${data.category || 'voynich'}-list`;
-                const tagColor = isDone ? "#444" : "#27ae60";
+        results.forEach(data => {
+            if (!data) return;
 
-                const card = `
-                    <div class="card" style="${isDone ? 'opacity: 0.6;' : ''}">
-                        <img src="${data.img}" onclick="view(this.src)" onerror="this.src='https://via.placeholder.com/160?text=档案解析中...'">
-                        <div class="info">
-                            <h3>编号：${data.id} <span class="tag" style="background:${tagColor}">${data.status || '寻找中'}</span></h3>
-                            <p>${data.desc}</p>
-                            <div class="price">${isDone ? '<span style="color:#666">💰 赏金已结算</span>' : '赏金：' + data.price}</div>
-                            ${isDone ? '<div class="done-stamp">SEALED / 已封卷</div>' : `<a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">📥 提交证据</a>`}
-                        </div>
-                    </div>`;
+            const isDone = data.status === "已结案";
+            if (isDone) stats.completed++; else stats.hunting++;
 
-                const listContainer = document.getElementById(targetListId);
-                if (listContainer) listContainer.insertAdjacentHTML('beforeend', card);
-            } catch (e) {}
-        }
+            // 归档逻辑
+            const targetListId = isDone ? 'bounty-list' : `${data.category || 'voynich'}-list`;
+            
+            // 保留你喜欢的颜色：结案为橙色 #ff9800，寻找中为绿色 #27ae60
+            const tagColor = isDone ? "#ff9800" : "#27ae60";
+
+            const card = `
+                <div class="card" style="${isDone ? 'border-left: 5px solid #ff9800;' : ''}">
+                    <img src="${data.img}" onclick="view(this.src)" onerror="this.src='https://via.placeholder.com/160?text=档案解析中...'">
+                    <div class="info">
+                        <h3>编号：${data.id} <span class="tag" style="background:${tagColor}">${data.status || '寻找中'}</span></h3>
+                        <p>${data.desc}</p>
+                        <div class="price">${isDone ? '<span style="color:#ff9800">💰 赏金已发放</span>' : '赏金：' + data.price}</div>
+                        ${isDone ? '<div class="done-stamp">SEALED / 已封卷</div>' : `<a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">📥 提交证据</a>`}
+                    </div>
+                </div>`;
+
+            const listContainer = document.getElementById(targetListId);
+            if (listContainer) listContainer.insertAdjacentHTML('beforeend', card);
+        });
+
+        // 关键：所有数据处理完后，更新饼图
         updateChart(stats.hunting, stats.completed);
     }
 
-    // 3. 统计饼图
     function updateChart(h, c) {
         const dom = document.getElementById('chart');
         if (!dom) return;
@@ -61,19 +64,15 @@ window.addEventListener('DOMContentLoaded', () => {
             series: [{
                 type: 'pie', radius: ['45%', '70%'],
                 data: [
-                    { value: h, name: '寻找中', itemStyle: { color: '#d35400' } },
-                    { value: c, name: '已结案', itemStyle: { color: '#222' } }
+                    { value: h, name: '寻找中', itemStyle: { color: '#27ae60' } },
+                    { value: c, name: '已结案', itemStyle: { color: '#ff9800' } } // 统计图也同步为橙色
                 ],
                 label: { show: false }, silent: true
             }]
         });
     }
 
-    // 4. 定时器：在线人数与情报滚动
-    setInterval(() => { 
-        if(onlineEl) onlineEl.innerText = Math.floor(Math.random()*20)+45; 
-    }, 4000);
-
+    setInterval(() => { if(onlineEl) onlineEl.innerText = Math.floor(Math.random()*20)+45; }, 4000);
     setInterval(() => {
         if(newsEl) {
             newsEl.style.opacity = 0;
