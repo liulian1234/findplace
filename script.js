@@ -2,7 +2,14 @@ window.addEventListener('DOMContentLoaded', () => {
     const onlineEl = document.getElementById('online-num');
     const newsEl = document.getElementById('news-text');
 
-    const newsPool = ["📡 正在同步全球猎人节点...", "🔍 发现 f18v 的新线索...", "💰 赏金大厅今日已发放 $1,200 奖金...", "⚡ 警告：破解算法负载异常升高..."];
+    // 1. 恢复你以前的滚动情报（诗意聊天）
+    const newsPool = [
+        "📡 正在同步全球猎人节点... 系统监测到新的情报上传...",
+        "🔍 [秘闻]：f18v 的花苞结构疑似具备捕食性特征...",
+        "💰 恭喜猎人 [K_92] 成功提交 f02v 关键证据！",
+        "⚡ 警告：破解算法负载异常升高...",
+        "📜 馆长：新的绝密档案已上传，请诸位猎人加紧解析。"
+    ];
 
     async function loadTasks() {
         const categoryLists = ['voynich-list', 'game-list', 'crack-list', 'progress-list', 'bounty-list'];
@@ -11,7 +18,7 @@ window.addEventListener('DOMContentLoaded', () => {
         const ids = Array.from({length: 150}, (_, i) => `f${i+1}v`);
         let stats = { hunting: 0, completed: 0 };
 
-        // 强力抓取逻辑
+        // 使用 Promise.all 确保所有文件都被检测到
         const results = await Promise.all(ids.map(id => 
             fetch(`./tasks/${id}.json`).then(res => res.ok ? res.json() : null).catch(() => null)
         ));
@@ -19,18 +26,19 @@ window.addEventListener('DOMContentLoaded', () => {
         results.forEach(data => {
             if (!data) return;
 
-            const isDone = (data.status === "已结案");
+            // 关键修复：兼容不同格式的“已结案”判断
+            const isDone = data.status === "已结案" || data.status === "已完成";
             if (isDone) stats.completed++; else stats.hunting++;
 
-            // 归档判断：只要是已结案，全部塞进 bounty-list
+            // 确保已结案的一定去 bounty-list
             const targetId = isDone ? 'bounty-list' : `${data.category || 'voynich'}-list`;
             const listContainer = document.getElementById(targetId);
             
             if (listContainer) {
                 const tagColor = isDone ? "#ff9800" : "#27ae60";
                 const card = `
-                    <div class="card" style="${isDone ? 'border-left: 5px solid #ff9800; opacity: 0.8;' : ''}">
-                        <img src="${data.img}" onclick="view(this.src)" onerror="this.src='https://via.placeholder.com/160?text=图片加载失败'">
+                    <div class="card" style="${isDone ? 'border-left: 5px solid #ff9800;' : ''}">
+                        <img src="${data.img}" onclick="view(this.src)" onerror="this.src='https://via.placeholder.com/160?text=图片解析中...'">
                         <div class="info">
                             <h3>编号：${data.id} <span class="tag" style="background:${tagColor}">${data.status}</span></h3>
                             <p>${data.desc}</p>
@@ -41,6 +49,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 listContainer.insertAdjacentHTML('beforeend', card);
             }
         });
+        // 更新你最喜欢的饼图
         updateChart(stats.hunting, stats.completed);
     }
 
@@ -61,11 +70,17 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if(onlineEl) setInterval(() => { onlineEl.innerText = Math.floor(Math.random()*15)+40; }, 4000);
+    // 恢复在线人数随机跳动
+    setInterval(() => { if(onlineEl) onlineEl.innerText = Math.floor(Math.random()*15)+40; }, 4000);
+    
+    // 恢复滚动情报内容轮播
     setInterval(() => {
         if(newsEl) {
             newsEl.style.opacity = 0;
-            setTimeout(() => { newsEl.innerText = newsPool[Math.floor(Math.random()*newsPool.length)]; newsEl.style.opacity = 1; }, 500);
+            setTimeout(() => {
+                newsEl.innerText = newsPool[Math.floor(Math.random()*newsPool.length)];
+                newsEl.style.opacity = 1;
+            }, 500);
         }
     }, 12000);
 
