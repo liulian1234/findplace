@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>谜稿赏金厅 - 猎人集结地中心</title>
+    <title>伏尼契赏金大厅</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 </head>
@@ -17,7 +17,7 @@
         <div class="nav-item" onclick="switchCat('progress', this)">⏳ 破解进度</div>
         <div class="nav-item" onclick="switchCat('bounty', this)">💰 赏金任务(已结案)</div>
         <div class="nav-item" onclick="switchCat('post', this)">✉️ 发布赏金</div>
-        <a href="https://your-login-page.com" class="auth-link">🔑 猎人登录/注册</a>
+        <a href="https://your-auth-page.com" class="auth-link">🔑 猎人登录/注册</a>
     </nav>
 
     <div id="news-ticker">
@@ -28,14 +28,8 @@
         <aside id="sidebar">
             <h3 class="sidebar-title">📊 任务情报站</h3>
             <div class="stat-grid">
-                <div class="stat-box">
-                    <span class="stat-val">128</span>
-                    <span class="stat-lab">参与猎人</span>
-                </div>
-                <div class="stat-box">
-                    <span class="stat-val" id="online-num">--</span>
-                    <span class="stat-lab">在线人数</span>
-                </div>
+                <div class="stat-box"><span class="stat-val">128</span><span class="stat-lab">参与猎人</span></div>
+                <div class="stat-box"><span class="stat-val" id="online-num">--</span><span class="stat-lab">在线人数</span></div>
             </div>
             <div id="chart" style="height: 180px;"></div>
             
