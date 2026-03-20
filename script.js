@@ -1,15 +1,30 @@
+// --- 1. Firebase 初始化 (请替换为你自己的配置) ---
+const firebaseConfig = {
+    apiKey: "你的_API_KEY",
+    authDomain: "你的_PROJECT.firebaseapp.com",
+    projectId: "你的_PROJECT_ID"
+};
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+
 window.addEventListener('DOMContentLoaded', () => {
     const onlineEl = document.getElementById('online-num');
     const newsEl = document.getElementById('news-text');
 
-    const newsPool = [
-        "📡 系统监测到 3 名新猎人进入了 [伏尼契手稿] 区域...",
-        "🔍 [秘闻]：f18v 的花苞结构疑似具备捕食性特征...",
-        "💰 恭喜猎人 [K_92] 成功提交 f02v 关键证据！奖金已汇出...",
-        "⚡ 警告：破解算法负载异常升高，正在分配云端节点...",
-        "📜 馆长：新的绝密档案已上传，请诸位猎人加紧解析..."
-    ];
+    // --- 2. 身份状态监听 ---
+    firebase.auth().onAuthStateChanged((user) => {
+        const loggedOutEl = document.getElementById('user-logged-out');
+        const loggedInEl = document.getElementById('user-logged-in');
+        const emailDisplay = document.getElementById('user-email');
+        if (user) {
+            if(loggedOutEl) loggedOutEl.style.display = 'none';
+            if(loggedInEl) { loggedInEl.style.display = 'block'; emailDisplay.innerText = `代号：${user.email}`; }
+        } else {
+            if(loggedOutEl) loggedOutEl.style.display = 'block';
+            if(loggedInEl) loggedInEl.style.display = 'none';
+        }
+    });
 
+    // --- 3. 加载与统计逻辑 (修复已结案不统计问题) ---
     async function loadTasks() {
         const categoryLists = ['voynich-list', 'game-list', 'crack-list', 'progress-list', 'bounty-list'];
         categoryLists.forEach(id => { if(document.getElementById(id)) document.getElementById(id).innerHTML = ''; });
@@ -17,7 +32,6 @@ window.addEventListener('DOMContentLoaded', () => {
         const ids = Array.from({length: 150}, (_, i) => `f${i+1}v`);
         let stats = { hunting: 0, completed: 0 };
 
-        // 使用 Promise.all 确保所有数据抓取完成后再统计
         const tasks = ids.map(id => 
             fetch(`./tasks/${id}.json?t=${Date.now()}`).then(res => res.ok ? res.json() : null).catch(() => null)
         );
@@ -26,14 +40,10 @@ window.addEventListener('DOMContentLoaded', () => {
 
         results.forEach(data => {
             if (!data) return;
-
             const isDone = data.status === "已结案";
             if (isDone) stats.completed++; else stats.hunting++;
 
-            // 归档逻辑
             const targetListId = isDone ? 'bounty-list' : `${data.category || 'voynich'}-list`;
-            
-            // 保留你喜欢的颜色：结案为橙色 #ff9800，寻找中为绿色 #27ae60
             const tagColor = isDone ? "#ff9800" : "#27ae60";
 
             const card = `
@@ -50,8 +60,6 @@ window.addEventListener('DOMContentLoaded', () => {
             const listContainer = document.getElementById(targetListId);
             if (listContainer) listContainer.insertAdjacentHTML('beforeend', card);
         });
-
-        // 关键：所有数据处理完后，更新饼图
         updateChart(stats.hunting, stats.completed);
     }
 
@@ -65,27 +73,40 @@ window.addEventListener('DOMContentLoaded', () => {
                 type: 'pie', radius: ['45%', '70%'],
                 data: [
                     { value: h, name: '寻找中', itemStyle: { color: '#27ae60' } },
-                    { value: c, name: '已结案', itemStyle: { color: '#ff9800' } } // 统计图也同步为橙色
+                    { value: c, name: '已结案', itemStyle: { color: '#ff9800' } }
                 ],
                 label: { show: false }, silent: true
             }]
         });
     }
 
+    // 各种定时器
     setInterval(() => { if(onlineEl) onlineEl.innerText = Math.floor(Math.random()*20)+45; }, 4000);
     setInterval(() => {
         if(newsEl) {
             newsEl.style.opacity = 0;
             setTimeout(() => {
-                newsEl.innerText = newsPool[Math.floor(Math.random()*newsPool.length)];
+                newsEl.innerText = "🔍 正在监测全球节点... 线索同步中...";
                 newsEl.style.opacity = 1;
             }, 500);
         }
     }, 12000);
-    
     loadTasks();
 });
 
+// --- 4. 身份操作函数 ---
+async function handleSignUp() {
+    const e = document.getElementById('email').value;
+    const p = document.getElementById('password').value;
+    if(!e || !p) return alert("凭证缺失。");
+    try { await firebase.auth().createUserWithEmailAndPassword(e, p); alert("激活成功！"); } catch (error) { alert(error.message); }
+}
+async function handleLogin() {
+    const e = document.getElementById('email').value;
+    const p = document.getElementById('password').value;
+    try { await firebase.auth().signInWithEmailAndPassword(e, p); } catch (error) { alert("验证失败。"); }
+}
+function handleLogout() { firebase.auth().signOut(); }
 function switchCat(id, el) {
     document.querySelectorAll('.category-section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
