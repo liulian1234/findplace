@@ -1,62 +1,123 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>伏尼契赏金大厅 - 秘密档案中心</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>谜稿赏金厅 — 伏尼契手稿猎人集结地</title>
+  <link rel="stylesheet" href="style.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
 </head>
 <body>
-    <div id="viewer" onclick="this.style.display='none'"><img id="viewer-img"></div>
 
-    <nav id="nav-bar">
-        <div class="nav-item active" onclick="switchCat('voynich', this)">🏺 伏尼契手稿</div>
-        <div class="nav-item" onclick="switchCat('game', this)">🎮 游戏任务</div>
-        <div class="nav-item" onclick="switchCat('crack', this)">🔓 破解任务</div>
-        <div class="nav-item" onclick="switchCat('progress', this)">⏳ 破解进度</div>
-        <div class="nav-item" onclick="switchCat('bounty', this)">💰 赏金任务(已结案)</div>
-        <div class="nav-item" onclick="switchCat('post', this)">✉️ 发布赏金</div>
-        <a href="https://your-login-page.com" class="auth-link">🔑 猎人登录/注册</a>
-    </nav>
+  <!-- 图片放大层 -->
+  <div id="viewer" class="viewer" onclick="closeViewer(event)">
+    <img id="viewer-img" alt="放大查看"/>
+  </div>
 
-    <div id="news-ticker">
-        <div class="ticker-content" id="news-text">📡 正在同步全球猎人节点... 系统监测到新的情报上传...</div>
+  <!-- 登录/注册弹窗 -->
+  <div id="auth-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal()">×</span>
+      <div class="form-toggle">
+        <button class="toggle-btn active" onclick="toggleForm('login')">登录</button>
+        <button class="toggle-btn" onclick="toggleForm('register')">注册</button>
+      </div>
+
+      <!-- 登录表单 -->
+      <form id="login-form" class="auth-form active">
+        <h2>猎人登录</h2>
+        <input type="text" id="login-username" placeholder="用户名 / 邮箱" required/>
+        <div class="password-wrapper">
+          <input type="password" id="login-password" placeholder="密码" required/>
+          <span class="toggle-password" onclick="togglePassword(this)">👁</span>
+        </div>
+        <button type="submit" class="btn submit-btn">进入秘档</button>
+        <p class="switch-link">新猎人？<a href="#" onclick="toggleForm('register')">立即注册</a></p>
+      </form>
+
+      <!-- 注册表单 -->
+      <form id="register-form" class="auth-form">
+        <h2>猎人注册</h2>
+        <input type="text" id="reg-username" placeholder="用户名" required/>
+        <input type="email" id="reg-email" placeholder="邮箱" required/>
+        <div class="password-wrapper">
+          <input type="password" id="reg-password" placeholder="设置密码" required/>
+          <span class="toggle-password" onclick="togglePassword(this)">👁</span>
+        </div>
+        <button type="submit" class="btn submit-btn">加入猎人团</button>
+        <p class="switch-link">已有账号？<a href="#" onclick="toggleForm('login')">返回登录</a></p>
+      </form>
     </div>
+  </div>
 
-    <div id="container">
-        <aside id="sidebar">
-            <h3 class="sidebar-title">📊 任务情报站</h3>
-            <div class="stat-grid">
-                <div class="stat-box">
-                    <span class="stat-val">128</span>
-                    <span class="stat-lab">参与猎人</span>
-                </div>
-                <div class="stat-box">
-                    <span class="stat-val" id="online-num">--</span>
-                    <span class="stat-lab">在线人数</span>
-                </div>
-            </div>
-            <div id="chart" style="height: 180px;"></div>
-            
-            <div class="notice-box">
-                <b class="notice-title">📜 馆长的叮嘱：</b>
-                <p class="notice-text">
-                    漫长的搜寻终有尽头。当你揭开这些植物或密码的真面目时，请通过“提交证据”联系我。 
-                    赏金将通过加密频道发放。已结案的谜题，将成为我们共同的勋章。
-                </p>
-            </div>
-        </aside>
-
-        <main id="main">
-            <section id="voynich" class="category-section active"><h2 class="title gold">伏尼契手稿 (Voynich)</h2><div id="voynich-list" class="task-grid"></div></section>
-            <section id="game" class="category-section"><h2 class="title blue">🎮 游戏任务大厅</h2><div id="game-list" class="task-grid"></div></section>
-            <section id="crack" class="category-section"><h2 class="title purple">🔓 破解任务终端</h2><div id="crack-list" class="task-grid"></div></section>
-            <section id="progress" class="category-section"><h2 class="title silver">⏳ 实时破解进度</h2><div id="progress-list" class="task-grid"></div></section>
-            <section id="bounty" class="category-section"><h2 class="title orange">💰 赏金档案馆 (已结案)</h2><div id="bounty-list" class="task-grid"></div></section>
-            <section id="post" class="category-section"><h2 class="title green">发布悬赏</h2><div class="post-card"><p>需要发动全网猎人的力量？</p><a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn green-btn">联系馆长发布任务</a></div></section>
-        </main>
+  <nav id="nav-bar">
+    <div class="nav-item active" onclick="switchCat('voynich', this)">🏺 伏尼契手稿</div>
+    <div class="nav-item" onclick="switchCat('game', this)">🎮 游戏任务</div>
+    <div class="nav-item" onclick="switchCat('crack', this)">🔓 破解任务</div>
+    <div class="nav-item" onclick="switchCat('progress', this)">⏳ 实时进度</div>
+    <div class="nav-item" onclick="switchCat('bounty', this)">💰 赏金档案</div>
+    <div class="nav-item" onclick="switchCat('post', this)">✉️ 发布赏金</div>
+    <div id="auth-status" class="auth-status">
+      <a href="#" id="auth-link" class="auth-link" onclick="openModal()">🔑 猎人登录/注册</a>
     </div>
-    <script src="script.js"></script>
+  </nav>
+
+  <div id="news-ticker">
+    <div id="news-text" class="ticker-content">📡 全球猎人节点同步中... 等待你的突破</div>
+  </div>
+
+  <div id="container">
+    <aside id="sidebar">
+      <h3>📊 情报站</h3>
+      <div class="stat-grid">
+        <div class="stat-box">
+          <span class="stat-val">142</span>
+          <span class="stat-lab">注册猎人</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-val" id="online-num">63</span>
+          <span class="stat-lab">在线猎人</span>
+        </div>
+      </div>
+      <div id="chart" style="height:180px; margin:20px 0;"></div>
+
+      <div class="notice-box">
+        <b>馆长密令</b>
+        <p>揭开一页，即点亮人类知识边界。<br>证据经核实，赏金通过加密频道即刻发放。</p>
+      </div>
+    </aside>
+
+    <main id="main">
+      <section id="voynich" class="category-section active">
+        <h2 class="title gold">伏尼契手稿核心页</h2>
+        <div id="voynich-list" class="task-grid"></div>
+      </section>
+      <section id="game" class="category-section">
+        <h2 class="title blue">游戏任务大厅</h2>
+        <div id="game-list" class="task-grid"></div>
+      </section>
+      <section id="crack" class="category-section">
+        <h2 class="title purple">破解任务终端</h2>
+        <div id="crack-list" class="task-grid"></div>
+      </section>
+      <section id="progress" class="category-section">
+        <h2 class="title silver">实时破解进度</h2>
+        <div id="progress-list" class="task-grid"></div>
+      </section>
+      <section id="bounty" class="category-section">
+        <h2 class="title orange">赏金档案馆（已结）</h2>
+        <div id="bounty-list" class="task-grid"></div>
+      </section>
+      <section id="post" class="category-section">
+        <h2 class="title green">发布新悬赏</h2>
+        <div class="post-card">
+          <p>需要全网猎人火力支援？</p>
+          <a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn green-btn">联系馆长</a>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
