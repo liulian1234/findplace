@@ -1,75 +1,48 @@
-window.addEventListener('DOMContentLoaded', () => {
-    const onlineEl = document.getElementById('online-num');
-    
-    async function loadTasks() {
-        const categoryLists = ['voynich-list', 'game-list', 'crack-list', 'progress-list', 'bounty-list'];
-        categoryLists.forEach(id => {
-            const el = document.getElementById(id);
-            if(el) el.innerHTML = '';
-        });
-
-        const ids = Array.from({length: 150}, (_, i) => `f${i+1}v`);
-        let stats = { hunting: 0, completed: 0 };
-
-        for (const id of ids) {
-            try {
-                const res = await fetch(`./tasks/${id}.json?t=${Date.now()}`);
-                if (!res.ok) continue;
-                const data = await res.json();
-
-                const isDone = data.status === "已结案";
-                if (isDone) stats.completed++; else stats.hunting++;
-
-                // 归档逻辑：已结案去 bounty，否则去原 category
-                const targetListId = isDone ? 'bounty-list' : `${data.category || 'voynich'}-list`;
-                const tagColor = isDone ? "#7f8c8d" : "#27ae60";
-
-                const card = `
-                    <div class="card" style="${isDone ? 'opacity: 0.8; border-left: 5px solid #7f8c8d;' : ''}">
-                        <img src="${data.img}" onclick="view(this.src)" onerror="this.src='https://via.placeholder.com/160?text=图片加载中'">
-                        <div class="info">
-                            <h3>编号：${data.id} <span class="tag" style="background:${tagColor}">${data.status || '寻找中'}</span></h3>
-                            <p>${data.desc}</p>
-                            <div class="price">${isDone ? '<span style="color:#7f8c8d">💰 赏金已发放</span>' : '赏金：' + data.price}</div>
-                            ${isDone ? '<div class="done-stamp">SEALED / 已封卷</div>' : `<a href="https://forms.gle/qACH4MgrUDwHaiyCA" target="_blank" class="btn">📥 提交证据</a>`}
-                        </div>
-                    </div>`;
-
-                const listContainer = document.getElementById(targetListId);
-                if (listContainer) listContainer.insertAdjacentHTML('beforeend', card);
-            } catch (e) {}
-        }
-        updateChart(stats.hunting, stats.completed);
-    }
-
-    function updateChart(h, c) {
-        const dom = document.getElementById('chart');
-        if (!dom) return;
-        const myChart = echarts.init(dom);
-        myChart.setOption({
-            series: [{
-                type: 'pie', radius: ['40%', '70%'],
-                data: [
-                    { value: h, name: '寻找中', itemStyle: { color: '#27ae60' } },
-                    { value: c, name: '已结案', itemStyle: { color: '#7f8c8d' } }
-                ],
-                label: { show: false }
-            }]
-        });
-    }
-
-    // 补回：在线人数随机跳动逻辑
-    setInterval(() => { 
-        if(onlineEl) onlineEl.innerText = Math.floor(Math.random()*15)+40; 
-    }, 4000);
-    
-    loadTasks();
-});
-
-function switchCat(id, el) {
-    document.querySelectorAll('.category-section').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    el.classList.add('active');
+:root {
+    --main: #2c3e50; --gold: #d35400; --bg: #f8f6f0;
+    --green: #27ae60; --blue: #3498db; --card-bg: #ffffff;
 }
-function view(s){ document.getElementById('viewer-img').src=s; document.getElementById('viewer').style.display='flex'; }
+body { font-family: 'PingFang SC', sans-serif; background: var(--bg); margin: 0; }
+#nav-bar { background: var(--main); height: 60px; display: flex; padding: 0 20px; position: fixed; top: 0; width: 100%; z-index: 1000; box-sizing: border-box; }
+.nav-item { color: white; padding: 0 15px; display: flex; align-items: center; cursor: pointer; opacity: 0.7; font-weight: bold; }
+.nav-item.active { opacity: 1; background: var(--gold); }
+
+#container { display: flex; margin-top: 60px; }
+#sidebar { width: 320px; background: white; height: calc(100vh - 60px); position: fixed; padding: 25px; border-right: 1px solid #eee; box-sizing: border-box; overflow-y: auto; }
+#main { margin-left: 320px; padding: 40px; width: calc(100% - 320px); box-sizing: border-box; }
+
+/* 统计卡片样式 */
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.stat-box { background: #fdfaf4; padding: 15px; border-radius: 8px; text-align: center; border: 1px solid #f1ece0; }
+.stat-val { font-size: 22px; font-weight: bold; color: var(--main); display: block; }
+.stat-lab { font-size: 11px; color: #7f8c8d; }
+
+.category-section { display: none; }
+.category-section.active { display: block; animation: fadeIn 0.4s; }
+.card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; display: flex; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative; }
+.card img { width: 160px; height: 160px; border-radius: 10px; object-fit: cover; margin-right: 25px; cursor: zoom-in; }
+
+.title { border-left: 5px solid; padding-left: 12px; margin-bottom: 30px; }
+.title.gold { border-color: var(--gold); }
+.title.blue { border-color: var(--blue); }
+.title.green { border-color: var(--green); }
+
+.price { color: var(--gold); font-weight: bold; font-size: 1.4em; margin: 10px 0; }
+.btn { display: inline-block; background: var(--main); color: white; padding: 8px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; }
+.tag { color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px; margin-left: 10px; vertical-align: middle; }
+
+/* 结案印章 */
+.done-stamp { position: absolute; right: 30px; bottom: 20px; border: 3px solid #7f8c8d; color: #7f8c8d; padding: 5px 15px; transform: rotate(-15deg); font-weight: bold; border-radius: 8px; opacity: 0.4; pointer-events: none; }
+
+#viewer { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; }
+#viewer-img { max-width: 90%; max-height: 85%; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+@media (max-width: 850px) {
+    #sidebar { width: 100%; position: relative; height: auto; border: none; }
+    #main { margin-left: 0; width: 100%; padding: 20px; }
+    #container { flex-direction: column; }
+    .card { flex-direction: column; }
+    .card img { width: 100%; margin: 0 0 20px 0; }
+}
